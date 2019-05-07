@@ -14,7 +14,7 @@ class SocialConnect extends ComponentBase
 	{
 		return [
 			'name'        => 'Social Login',
-			'description' => 'Adds social_login_link($provider, $success_url, $error_url) method.'
+			'description' => 'Adds social_connect_link($provider, $success_url, $error_url) method.'
 		];
 	}
 
@@ -39,12 +39,12 @@ class SocialConnect extends ComponentBase
 		// 	}
 		// ]);
 
-		$social_login_links = [];
+		$social_connect_links = [];
 		foreach ( $providers as $provider_class => $provider_details )
 			if ( $provider_class::instance()->isEnabled() )
-				$social_login_links[$provider_details['alias']] = URL::route('tohur_socialconnect_provider', [$provider_details['alias']]);
+				$social_connect_links[$provider_details['alias']] = URL::route('tohur_socialconnect_provider', [$provider_details['alias']]);
 
-		$this->page['social_login_links'] = $social_login_links;
+		$this->page['social_connect_links'] = $social_connect_links;
 
 		$this->page['errors'] = Session::get('errors', new ViewErrorBag);
 	}

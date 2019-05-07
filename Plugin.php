@@ -116,12 +116,12 @@ class Plugin extends PluginBase
 		Event::listen('backend.auth.extendSigninView', function() {
             $providers = ProviderManager::instance()->listProviders();
 
-            $social_login_links = [];
+            $social_connect_links = [];
             foreach ( $providers as $provider_class => $provider_details )
                 if ( $provider_class::instance()->isEnabledForBackend() )
-                    $social_login_links[$provider_details['alias']] = URL::route('tohur_socialconnect_provider', [$provider_details['alias']]).'?s='.Backend::url().'&f='.Backend::url('backend/auth/signin');
+                    $social_connect_links[$provider_details['alias']] = URL::route('tohur_socialconnect_provider', [$provider_details['alias']]).'?s='.Backend::url().'&f='.Backend::url('backend/auth/signin');
 
-            if ( !count($social_login_links) )
+            if ( !count($social_connect_links) )
                 return;
 
 		    require __DIR__.'/partials/backend/_login.htm';
