@@ -1,5 +1,5 @@
 <?php if ( $record->tohur_socialconnect_providers->count() ): ?>
-    <?php foreach ( $record->tohur_socialconnect_providers as $provider ): ?>
-        <i class="fab fa-2x fa-<?= strtolower($provider->provider_id) ?>" data-toggle='tooltip' title="<?= $provider->provider_id ?>"></i>
-    <?php endforeach; ?>
+<?php foreach ( $record->tohur_socialconnect_providers as $provider ): ?>
+<i class="fab fa-2x fa-<?= strtolower($provider->provider_id) ?>" data-toggle='tooltip' title="<?= $provider->provider_id ?>"></i>
+<?php endforeach; ?>
 <?php endif;

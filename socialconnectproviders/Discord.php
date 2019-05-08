@@ -1,62 +1,59 @@
-<?php namespace Tohur\SocialConnect\SocialConnectProviders;
+<?php
+
+namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\Classes\DiscordProvider;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
-
 use URL;
 
-class Discord extends SocialConnectProviderBase
-{
-	use \October\Rain\Support\Traits\Singleton;
+class Discord extends SocialConnectProviderBase {
 
-	protected $driver = 'Discord';
+    use \October\Rain\Support\Traits\Singleton;
 
-	/**
-	 * Initialize the singleton free from constructor parameters.
-	 */
-	protected function init()
-	{
-		parent::init();
+    protected $driver = 'Discord';
+
+    /**
+     * Initialize the singleton free from constructor parameters.
+     */
+    protected function init() {
+        parent::init();
 
         // Socialite uses config files for credentials but we want to pass from
         // our settings page - so override the login method for this provider
         Socialite::extend($this->driver, /**
-         *
-         */
-        function($app) {
+                 *
+                 */
+                function($app) {
             $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             $providers['Discord']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Discord'], true);
             $provider = Socialite::buildProvider(
-                DiscordProvider::class, (array)@$providers['Discord']
+                            DiscordProvider::class, (array) @$providers['Discord']
             );
             return $provider;
         });
-	}
+    }
 
-	public function isEnabled()
-	{
-		$providers = $this->settings->get('providers', []);
+    public function isEnabled() {
+        $providers = $this->settings->get('providers', []);
 
-		return !empty($providers['Discord']['enabled']);
-	}
+        return !empty($providers['Discord']['enabled']);
+    }
 
-    public function isEnabledForBackend()
-    {
+    public function isEnabledForBackend() {
         $providers = $this->settings->get('providers', []);
 
         return !empty($providers['Discord']['enabledForBackend']);
     }
 
-	public function extendSettingsForm(Form $form)
-	{
-		$form->addFields([
-			'noop' => [
-				'type' => 'partial',
-				'path' => '$/tohur/socialconnect/partials/backend/forms/settings/_discord_info.htm',
-				'tab' => 'Discord',
-			],
+    public function extendSettingsForm(Form $form) {
+        $form->addFields([
+            'noop' => [
+                'type' => 'partial',
+                'path' => '$/tohur/socialconnect/partials/backend/forms/settings/_discord_info.htm',
+                'tab' => 'Discord',
+            ],
             'providers[Discord][enabled]' => [
                 'label' => 'Enabled on frontend?',
                 'type' => 'checkbox',
@@ -73,11 +70,11 @@ class Discord extends SocialConnectProviderBase
                 'span' => 'right',
                 'tab' => 'Discord',
             ],
-             'providers[Discord][redirect]' => [
+            'providers[Discord][redirect]' => [
                 'label' => 'Redirect',
                 'type' => 'text',
                 'tab' => 'Discord',
-            ],                   
+            ],
             'providers[Discord][client_id]' => [
                 'label' => 'Client ID',
                 'type' => 'text',
@@ -88,14 +85,13 @@ class Discord extends SocialConnectProviderBase
                 'type' => 'text',
                 'tab' => 'Discord',
             ],
-		], 'primary');
-	}
+                ], 'primary');
+    }
 
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function redirectToProvider()
-    {
+    public function redirectToProvider() {
         return Socialite::with($this->driver)->redirect();
     }
 
@@ -104,10 +100,10 @@ class Discord extends SocialConnectProviderBase
      *
      * @return array
      */
-    public function handleProviderCallback()
-    {
+    public function handleProviderCallback() {
         $user = Socialite::driver($this->driver)->user();
 
-        return (array)$user;
+        return (array) $user;
     }
+
 }

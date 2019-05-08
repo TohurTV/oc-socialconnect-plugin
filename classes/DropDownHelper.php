@@ -1,51 +1,50 @@
-<?php namespace Tohur\SocialConnect\Classes;
+<?php
+
+namespace Tohur\SocialConnect\Classes;
 
 use Cms\Classes\Page as Pg;
 use Cms\Classes\Partial as Prtl;
 use Cms\Classes\Theme;
 
-class DropDownHelper
-{
-	use \October\Rain\Support\Traits\Singleton;
+class DropDownHelper {
 
-	protected $pages = [];
-	protected $partials = [];
+    use \October\Rain\Support\Traits\Singleton;
 
-	public function pages()
-	{
-		if ( !$this->pages )
-		{
-			$theme = Theme::getEditTheme();
-			$pages = Pg::listInTheme($theme, true);
+    protected $pages = [];
+    protected $partials = [];
 
-			$options = [];
-			foreach ( $pages as $page )
-				$options[$page->baseFileName] = $page->title . ' ('.$page->url.')';
+    public function pages() {
+        if (!$this->pages) {
+            $theme = Theme::getEditTheme();
+            $pages = Pg::listInTheme($theme, true);
 
-			asort($options);
+            $options = [];
+            foreach ($pages as $page)
+                $options[$page->baseFileName] = $page->title . ' (' . $page->url . ')';
 
-			$this->pages = $options;
-		}
+            asort($options);
 
-		return $this->pages;
-	}
+            $this->pages = $options;
+        }
 
-	public function partials()
-	{
-		if ( !$this->partials )
-		{
-			$theme = Theme::getEditTheme();
-			$partials = Prtl::listInTheme($theme, true);
+        return $this->pages;
+    }
 
-			$options = [];
-			foreach ( $partials as $partial )
-				$options[$partial->baseFileName] = $partial->baseFileName;
+    public function partials() {
+        if (!$this->partials) {
+            $theme = Theme::getEditTheme();
+            $partials = Prtl::listInTheme($theme, true);
 
-			asort($options);
+            $options = [];
+            foreach ($partials as $partial)
+                $options[$partial->baseFileName] = $partial->baseFileName;
 
-			$this->partials = $options;
-		}
+            asort($options);
 
-		return $this->partials;
-	}
+            $this->partials = $options;
+        }
+
+        return $this->partials;
+    }
+
 }

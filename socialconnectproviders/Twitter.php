@@ -1,4 +1,6 @@
-<?php namespace Tohur\SocialConnect\SocialConnectProviders;
+<?php
+
+namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
@@ -7,18 +9,17 @@ use Laravel\Socialite\One\TwitterProvider;
 use League\OAuth1\Client\Server\Twitter as TwitterServer;
 use URL;
 
-class Twitter extends SocialConnectProviderBase
-{
-	use \October\Rain\Support\Traits\Singleton;
+class Twitter extends SocialConnectProviderBase {
 
-	protected $driver = 'twitter';
+    use \October\Rain\Support\Traits\Singleton;
 
-	/**
-	 * Initialize the singleton free from constructor parameters.
-	 */
-	protected function init()
-	{
-		parent::init();
+    protected $driver = 'twitter';
+
+    /**
+     * Initialize the singleton free from constructor parameters.
+     */
+    protected function init() {
+        parent::init();
 
         // Socialite uses config files for credentials but we want to pass from
         // our settings page - so override the login method for this provider
@@ -27,23 +28,21 @@ class Twitter extends SocialConnectProviderBase
             $providers['Twitter']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Twitter'], true);
 
             return new TwitterProvider(
-                app()->request, new TwitterServer($providers['Twitter'])
+                    app()->request, new TwitterServer($providers['Twitter'])
             );
             return Socialite::buildProvider(
-                TwitterProvider::class, (array)@$providers['Twitter']
+                            TwitterProvider::class, (array) @$providers['Twitter']
             );
         });
-	}
+    }
 
-	public function isEnabled()
-	{
-		$providers = $this->settings->get('providers', []);
+    public function isEnabled() {
+        $providers = $this->settings->get('providers', []);
 
-		return !empty($providers['Twitter']['enabled']);
-	}
+        return !empty($providers['Twitter']['enabled']);
+    }
 
-    public function isEnabledForBackend()
-    {
+    public function isEnabledForBackend() {
         //$providers = $this->settings->get('providers', []);
         //
         //return !empty($providers['Twitter']['enabledForBackend']);
@@ -51,24 +50,21 @@ class Twitter extends SocialConnectProviderBase
         return false;
     }
 
-	public function extendSettingsForm(Form $form)
-	{
-		$form->addFields([
-			'noop' => [
-				'type' => 'partial',
-				'path' => '$/tohur/socialconnect/partials/backend/forms/settings/_twitter_info.htm',
-				'tab' => 'Twitter',
-			],
-
-			'providers[Twitter][enabled]' => [
-				'label' => 'Enabled on frontend?',
-				'type' => 'checkbox',
+    public function extendSettingsForm(Form $form) {
+        $form->addFields([
+            'noop' => [
+                'type' => 'partial',
+                'path' => '$/tohur/socialconnect/partials/backend/forms/settings/_twitter_info.htm',
+                'tab' => 'Twitter',
+            ],
+            'providers[Twitter][enabled]' => [
+                'label' => 'Enabled on frontend?',
+                'type' => 'checkbox',
                 'comment' => 'Can frontend users log in with Twitter?',
                 'default' => 'true',
-				'span' => 'left',
+                'span' => 'left',
                 'tab' => 'Twitter',
-			],
-
+            ],
             //'providers[Twitter][enabledForBackend]' => [
             //    'label' => 'Enabled on backend?',
             //    'type' => 'checkbox',
@@ -77,26 +73,23 @@ class Twitter extends SocialConnectProviderBase
             //    'span' => 'right',
             //    'tab' => 'Twitter',
             //],
-
-			'providers[Twitter][identifier]' => [
-				'label' => 'API Key',
-				'type' => 'text',
-				'tab' => 'Twitter',
-			],
-
-			'providers[Twitter][secret]' => [
-				'label' => 'API Secret',
-				'type' => 'text',
-				'tab' => 'Twitter',
-			],
-		], 'primary');
-	}
+            'providers[Twitter][identifier]' => [
+                'label' => 'API Key',
+                'type' => 'text',
+                'tab' => 'Twitter',
+            ],
+            'providers[Twitter][secret]' => [
+                'label' => 'API Secret',
+                'type' => 'text',
+                'tab' => 'Twitter',
+            ],
+                ], 'primary');
+    }
 
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function redirectToProvider()
-    {
+    public function redirectToProvider() {
         return Socialite::driver($this->driver)->redirect();
     }
 
@@ -105,13 +98,13 @@ class Twitter extends SocialConnectProviderBase
      *
      * @return array
      */
-    public function handleProviderCallback()
-    {
+    public function handleProviderCallback() {
         $user = Socialite::driver($this->driver)->user();
 
-        if ( empty($user->email) )
-            $user->email = $user->nickname.'@dev.null';
+        if (empty($user->email))
+            $user->email = $user->nickname . '@dev.null';
 
-        return (array)$user;
+        return (array) $user;
     }
+
 }

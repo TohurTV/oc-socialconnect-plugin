@@ -1,4 +1,6 @@
-<?php namespace Tohur\SocialConnect\Classes;
+<?php
+
+namespace Tohur\SocialConnect\Classes;
 
 use Auth;
 use BackendAuth;
@@ -15,16 +17,15 @@ use October\Rain\Auth\Models\User;
 use RainLab\User\Models\Settings as UserSettings;
 use System\Models\File;
 
-class UserManager
-{
+class UserManager {
+
     use \October\Rain\Support\Traits\Singleton;
 
     /**
      * Finds a backend user by the email address.
      * @param string $email
      */
-    public function findBackendUserByEmail($email)
-    {
+    public function findBackendUserByEmail($email) {
         $query = $this->createBackendUserModelQuery();
         $user = $query->where('email', $email)->first();
         return $user ?: null;
@@ -33,8 +34,7 @@ class UserManager
     /**
      * Prepares a query derived from the user model.
      */
-    protected function createBackendUserModelQuery()
-    {
+    protected function createBackendUserModelQuery() {
         $model = BackendAuth::createUserModel();
         $query = $model->newQuery();
         BackendAuth::extendUserQuery($query);
@@ -50,18 +50,15 @@ class UserManager
      *
      * @return User
      */
-    public function find(array $provider_details, array $user_details)
-    {
+    public function find(array $provider_details, array $user_details) {
         // Are we already attached?
         $provider = $this->findProvider($provider_details);
 
-        if ( !$provider )
-        {
+        if (!$provider) {
             // Does a user with this email exist?
-            $user = Auth::findUserByLogin( $user_details['email'] );
+            $user = Auth::findUserByLogin($user_details['email']);
             // No user with this email exists - create one
-            if ( !$user )
-            {
+            if (!$user) {
                 if (UserSettings::get('allow_registration')) {
                     // Register the user
                     $user = $this->registerUser($provider_details, $user_details);
@@ -75,13 +72,11 @@ class UserManager
                 $user = $this->attachProvider($user, $provider_details);
         }
         // Provider was found, return the attached user
-        else
-        {
+        else {
             $user = $provider->user;
 
             // The user may have been deleted. Make sure this isn't the case
-            if ( !$user )
-            {
+            if (!$user) {
                 $provider->delete();
                 return $this->find($provider_details, $user_details);
             }
@@ -97,11 +92,10 @@ class UserManager
      *
      * @return Provider on sucess, null on fail
      */
-    public function findProvider(array $provider_details)
-    {
+    public function findProvider(array $provider_details) {
         return Provider::where('provider_id', '=', $provider_details['provider_id'])
-            ->where('provider_token', '=', $provider_details['provider_token'])
-            ->first();
+                        ->where('provider_token', '=', $provider_details['provider_token'])
+                        ->first();
     }
 
     /**
@@ -112,20 +106,19 @@ class UserManager
      *
      * @return User
      */
-    public function registerUser(array $provider_details, array $user_details)
-    {
+    public function registerUser(array $provider_details, array $user_details) {
         // Support custom login handling
         $user = Event::fire('tohur.socialconnect.registerUser', [
-            $provider_details, $user_details
-        ], true);
+                    $provider_details, $user_details
+                        ], true);
 
-        if ( $user ){
+        if ($user) {
             $this->attachAvatar($user, $user_details);
             return $user;
         }
 
         // Create a username if one doesn't exist
-        if ( !isset($user_details['username']) )
+        if (!isset($user_details['username']))
             $user_details['username'] = $user_details['email'];
 
         // Generate a random password for the new user
@@ -137,7 +130,6 @@ class UserManager
         return $this->attachProvider($user, $provider_details);
     }
 
-
     /**
      * Attach avatar to a user
      *
@@ -145,28 +137,23 @@ class UserManager
      * @param  array $user_details       ['email'=>..., ...]
      *
      */
-
-    public function attachAvatar(User $user, array $user_details)
-    {
-        if (array_key_exists("avatar_original",$user_details))
-        {
+    public function attachAvatar(User $user, array $user_details) {
+        if (array_key_exists("avatar_original", $user_details)) {
             $thumbOptions = [
-                    'mode'      => 'crop',
-                    'extension' => 'auto'
+                'mode' => 'crop',
+                'extension' => 'auto'
             ];
 
-            if ( !empty($user_details['avatar_original']) )
-            {
+            if (!empty($user_details['avatar_original'])) {
                 $file = new File;
-                $saveto = tempnam($file->getTempPath(), 'user_id_'.$user->id.'_avatar');
-                $saveToImage = $saveto.'.jpg';
+                $saveto = tempnam($file->getTempPath(), 'user_id_' . $user->id . '_avatar');
+                $saveToImage = $saveto . '.jpg';
                 rename($saveto, $saveToImage);
                 self::grab_image($user_details['avatar_original'], $saveToImage);
 
                 $file->data = $saveToImage;
 
-                if ( $file->data && filesize($saveToImage) > 0 )
-                {
+                if ($file->data && filesize($saveToImage) > 0) {
                     $thumb = $file->getThumb('160', '160', $thumbOptions);
                     $file->save();
                     $user->avatar()->add($file);
@@ -177,31 +164,29 @@ class UserManager
         }
     }
 
-
     /**
      * grab image and store locally
      *
      * @param  $url
      * @param  $saveto
      */
-    public static function grab_image($url,$saveto)
-    {
+    public static function grab_image($url, $saveto) {
         $client = new Client();
 
         try {
             $profileResponse = $client->get($url);
             $profilePicture = $profileResponse->getBody();
 
-            if ( file_exists($saveto) ) {
+            if (file_exists($saveto)) {
                 unlink($saveto);
             }
-            $fp = fopen($saveto,'x');
+            $fp = fopen($saveto, 'x');
             fwrite($fp, $profilePicture);
             fclose($fp);
         } catch (RequestException $e) {
-            if ( $e->hasResponse() ) {
+            if ($e->hasResponse()) {
                 Log::error(Psr7\str($e->getResponse()));
-            } else{
+            } else {
                 Log::error($e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             }
         } catch (Exception $e) {
@@ -217,11 +202,10 @@ class UserManager
      *
      * @return User
      */
-    public function attachProvider(User $user, array $provider_details)
-    {
+    public function attachProvider(User $user, array $provider_details) {
         $user->tohur_socialconnect_providers()
-            ->where('provider_id', $provider_details['provider_id'])
-            ->delete();
+                ->where('provider_id', $provider_details['provider_id'])
+                ->delete();
 
         $provider = new Provider($provider_details);
         $provider->user = $user;
@@ -229,4 +213,5 @@ class UserManager
 
         return $user;
     }
+
 }

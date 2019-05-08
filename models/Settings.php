@@ -1,16 +1,16 @@
-<?php namespace Tohur\SocialConnect\Models;
+<?php
+
+namespace Tohur\SocialConnect\Models;
 
 use Model;
 
-class Settings extends Model
-{
-	public $implement = ['System.Behaviors.SettingsModel'];
+class Settings extends Model {
 
-	// A unique code
-	public $settingsCode = 'tohur_socialconnect_settings';
+    public $implement = ['System.Behaviors.SettingsModel'];
+    // A unique code
+    public $settingsCode = 'tohur_socialconnect_settings';
+    // Reference to field configuration
+    public $settingsFields = 'fields.yaml';
+    protected $cache = [];
 
-	// Reference to field configuration
-	public $settingsFields = 'fields.yaml';
-
-	protected $cache = [];
 }

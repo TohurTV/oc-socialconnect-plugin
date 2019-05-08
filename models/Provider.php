@@ -1,4 +1,6 @@
-<?php namespace Tohur\SocialConnect\Models;
+<?php
+
+namespace Tohur\SocialConnect\Models;
 
 use App;
 use Str;
@@ -9,24 +11,25 @@ use October\Rain\Support\Markdown;
 /**
  * Post Model
  */
-class Provider extends Model
-{
-	public $timestamps = false;
+class Provider extends Model {
 
-	/**
-	 * @var string The database table used by the model.
-	 */
-	public $table = 'tohur_socialconnect_providers';
+    public $timestamps = false;
 
-	/**
-	 * @var array The attributes that are mass assignable.
-	 */
-	protected $fillable = ['user_id', 'provider_id', 'provider_token'];
+    /**
+     * @var string The database table used by the model.
+     */
+    public $table = 'tohur_socialconnect_providers';
 
-	/**
-	 * @var array Relations
-	 */
-	public $belongsTo = [
-		'user' => ['RainLab\User\Models\User']
-	];
+    /**
+     * @var array The attributes that are mass assignable.
+     */
+    protected $fillable = ['user_id', 'provider_id', 'provider_token'];
+
+    /**
+     * @var array Relations
+     */
+    public $belongsTo = [
+        'user' => ['RainLab\User\Models\User']
+    ];
+
 }

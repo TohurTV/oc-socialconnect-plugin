@@ -1,115 +1,114 @@
-<?php namespace Tohur\SocialConnect\Classes;
+<?php
+
+namespace Tohur\SocialConnect\Classes;
 
 use System\Classes\PluginManager;
 
-class ProviderManager
-{
-	use \October\Rain\Support\Traits\Singleton;
+class ProviderManager {
 
-	/**
-	 * @var array An array of provider types.
-	 */
-	protected $providers;
+    use \October\Rain\Support\Traits\Singleton;
 
-	/**
-	 * @var array Cache of report widget registration callbacks.
-	 */
-	private $providerCallbacks = [];
+    /**
+     * @var array An array of provider types.
+     */
+    protected $providers;
 
-	/**
-	 * @var array An array of report widgets.
-	 */
-	protected $providerAliases;
+    /**
+     * @var array Cache of report widget registration callbacks.
+     */
+    private $providerCallbacks = [];
 
-	/**
-	 * Initialize this singleton.
-	 */
-	protected function init()
-	{
-		$this->pluginManager = PluginManager::instance();
-	}
+    /**
+     * @var array An array of report widgets.
+     */
+    protected $providerAliases;
 
-	/**
-	 * Returns a list of registered form widgets.
-	 * @return array Array keys are class names.
-	 */
-	public function listProviders()
-	{
-		if ($this->providers === null) {
-			$this->providers = [];
+    /**
+     * Initialize this singleton.
+     */
+    protected function init() {
+        $this->pluginManager = PluginManager::instance();
+    }
 
-			/*
-			 * Load module widgets
-			 */
-			foreach ($this->providerCallbacks as $callback) {
-				$callback($this);
-			}
+    /**
+     * Returns a list of registered form widgets.
+     * @return array Array keys are class names.
+     */
+    public function listProviders() {
+        if ($this->providers === null) {
+            $this->providers = [];
 
-			/*
-			 * Load plugin menu item types
-			 */
-			$plugins = $this->pluginManager->getPlugins();
+            /*
+             * Load module widgets
+             */
+            foreach ($this->providerCallbacks as $callback) {
+                $callback($this);
+            }
 
-			foreach ($plugins as $plugin) {
-				// Plugins doesn't have a register_menu_item_types method
-				if ( !method_exists($plugin, 'register_tohur_socialconnect_providers') )
-					continue;
+            /*
+             * Load plugin menu item types
+             */
+            $plugins = $this->pluginManager->getPlugins();
 
-				// Plugin didn't register any menu item types
-				if (!is_array($types = $plugin->register_tohur_socialconnect_providers()))
-					continue;
+            foreach ($plugins as $plugin) {
+                // Plugins doesn't have a register_menu_item_types method
+                if (!method_exists($plugin, 'register_tohur_socialconnect_providers'))
+                    continue;
 
-				foreach ($types as $className => $typeInfo)
-					$this->registerProvider($className, $typeInfo);
-			}
-		}
+                // Plugin didn't register any menu item types
+                if (!is_array($types = $plugin->register_tohur_socialconnect_providers()))
+                    continue;
 
-		return $this->providers;
-	}
+                foreach ($types as $className => $typeInfo)
+                    $this->registerProvider($className, $typeInfo);
+            }
+        }
 
-	/*
-	 * Registers a single form form widget.
-	 */
-	public function registerProvider($className, $widgetInfo = null)
-	{
-		$widgetAlias = isset($widgetInfo['alias']) ? $widgetInfo['alias'] : null;
-		if (!$widgetAlias)
-			$widgetAlias = Str::getClassId($className);
+        return $this->providers;
+    }
 
-		$this->providers[$className] = $widgetInfo;
-		$this->providerAliases[$widgetAlias] = $className;
-	}
+    /*
+     * Registers a single form form widget.
+     */
 
-	/**
-	 * Manually registers form widget for consideration.
-	 * Usage:
-	 * <pre>
-	 *   WidgetManager::registerProviders(function($manager){
-	 *       $manager->registerProvider('Backend\Providers\CodeEditor', 'codeeditor');
-	 *       $manager->registerProvider('Backend\Providers\RichEditor', 'richeditor');
-	 *   });
-	 * </pre>
-	 */
-	public function registerProviders(callable $definitions)
-	{
-		$this->providerCallbacks[] = $definitions;
-	}
+    public function registerProvider($className, $widgetInfo = null) {
+        $widgetAlias = isset($widgetInfo['alias']) ? $widgetInfo['alias'] : null;
+        if (!$widgetAlias)
+            $widgetAlias = Str::getClassId($className);
 
-	/**
-	 * Returns a class name from a form widget alias
-	 * Normalizes a class name or converts an alias to it's class name.
-	 * @return string The class name resolved, or null.
-	 */
-	public function resolveProvider($name)
-	{
-		if ($this->providers === null)
-			$this->listProviders();
+        $this->providers[$className] = $widgetInfo;
+        $this->providerAliases[$widgetAlias] = $className;
+    }
 
-		$aliases = $this->providerAliases;
+    /**
+     * Manually registers form widget for consideration.
+     * Usage:
+     * <pre>
+     *   WidgetManager::registerProviders(function($manager){
+     *       $manager->registerProvider('Backend\Providers\CodeEditor', 'codeeditor');
+     *       $manager->registerProvider('Backend\Providers\RichEditor', 'richeditor');
+     *   });
+     * </pre>
+     */
+    public function registerProviders(callable $definitions) {
+        $this->providerCallbacks[] = $definitions;
+    }
 
-		if (isset($aliases[$name]))
-			return $aliases[$name];
+    /**
+     * Returns a class name from a form widget alias
+     * Normalizes a class name or converts an alias to it's class name.
+     * @return string The class name resolved, or null.
+     */
+    public function resolveProvider($name) {
+        if ($this->providers === null)
+            $this->listProviders();
 
-		return null;
-	}
+        $aliases = $this->providerAliases;
+
+        if (isset($aliases[$name]))
+            return $aliases[$name];
+
+        return null;
+    }
+
 }

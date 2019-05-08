@@ -1,6 +1,8 @@
-<?php return [
+<?php
+
+return [
     'plugin' => [
-        'name' => 'Discordlogin',
+        'name' => 'Social Connect',
         'description' => ''
     ]
 ];

@@ -11,7 +11,7 @@
     ],
     "require": {
         "laravel/socialite": "3.1.*",
-      "socialiteproviders/discord": "2.0.2"
+        "socialiteproviders/discord": "2.0.2"
     }
 }
 
