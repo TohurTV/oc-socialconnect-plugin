@@ -33,7 +33,7 @@ class Plugin extends PluginBase {
      */
     public function pluginDetails() {
         return [
-            'name' => 'Social Login',
+            'name' => 'Social Connect',
             'description' => 'Allows visitors to register/sign in with their social media accounts',
             'author' => 'Tohur',
             'icon' => 'icon-users'
@@ -43,7 +43,7 @@ class Plugin extends PluginBase {
     public function registerSettings() {
         return [
             'settings' => [
-                'label' => 'Social Login',
+                'label' => 'Social Connect',
                 'description' => 'Manage Social Login providers.',
                 'icon' => 'icon-users',
                 'class' => 'Tohur\SocialConnect\Models\Settings',
