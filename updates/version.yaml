@@ -1,3 +1,5 @@
 1.0.0:
     - First version of SocialConnect
     - create_tohur_socialconnect_providers.php
+1.0.1:
+    - Moving default Facebook,Google, and Twitter providers over to socialiteproviders/manager and added Twitch and Mixer to deps. to be fully integrated soon

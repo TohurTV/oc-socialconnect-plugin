@@ -11,7 +11,12 @@
     ],
     "require": {
         "laravel/socialite": "3.1.*",
-        "socialiteproviders/discord": "2.0.2"
+        "socialiteproviders/facebook": "dev-master",
+        "socialiteproviders/google": "3.0.*",
+        "socialiteproviders/twitter": "3.0.*",
+        "socialiteproviders/discord": "2.0.*",
+        "socialiteproviders/twitch": "5.0.*",
+        "socialiteproviders/mixer": "1.0.*"
     }
 }
 
