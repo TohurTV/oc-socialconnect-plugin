@@ -35,7 +35,7 @@ class Plugin extends PluginBase {
         return [
             'name' => 'Social Connect',
             'description' => 'Allows visitors to register/sign in with their social media accounts',
-            'author' => 'Tohur',
+            'author' => 'Joshua Webb',
             'icon' => 'icon-users'
         ];
     }
