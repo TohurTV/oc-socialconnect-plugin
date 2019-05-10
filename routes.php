@@ -1,18 +1,5 @@
 <?php
 
-Route::get('logout', function () {
-    $user = Auth::getUser();
-
-    Auth::logout();
-
-    if ($user) {
-        Event::fire('rainlab.user.logout', [$user]);
-    }
-
-
-    return Redirect::to('/');
-});
-
 // http://home.tohur.com/tohur/socialconnect/Google?s=/&f=/login
 Route::get('socialconnect/{provider}', array("as" => "tohur_socialconnect_provider", 'middleware' => ['web'], function($provider_name, $action = "") {
         $success_redirect = Input::get('s', '/');
