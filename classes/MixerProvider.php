@@ -7,7 +7,7 @@ use Laravel\Socialite\Two\ProviderInterface;
 use SocialiteProviders\Manager\OAuth2\User;
 use SocialiteProviders\Twitch\Provider;
 
-class TwitchProvider extends Provider {
+class MixerProvider extends Provider {
 
     /**
      * {@inheritdoc}
