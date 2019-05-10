@@ -25,7 +25,6 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
     public function down() {
         Schema::drop('tohur_socialconnect_providers');
         Schema::table('users', function($table) {
-            $table->dropColumn('avatar');
             $table->dropColumn('tohur_socialconnect_user_providers');
         });
     }
