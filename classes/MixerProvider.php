@@ -5,7 +5,7 @@ namespace Tohur\SocialConnect\Classes;
 use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\ProviderInterface;
 use SocialiteProviders\Manager\OAuth2\User;
-use SocialiteProviders\Twitch\Provider;
+use SocialiteProviders\Mixer\Provider;
 
 class MixerProvider extends Provider {
 
