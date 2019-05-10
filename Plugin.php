@@ -68,6 +68,7 @@ class Plugin extends PluginBase {
             $model->hasMany['tohur_socialconnect_providers'] = ['Tohur\SocialConnect\Models\Provider'];
         });
 
+
         // Add 'Social Logins' column to users list
         UsersController::extendListColumns(function($widget, $model) {
             if (!$model instanceof \RainLab\User\Models\User)
@@ -151,6 +152,16 @@ class Plugin extends PluginBase {
                 'alias' => 'Discord',
                 'description' => 'Log in with Discord'
             ],
+            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Twitch' => [
+                'label' => 'Twitch',
+                'alias' => 'Twitch',
+                'description' => 'Log in with Twitch'
+            ],
+            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Mixer' => [
+                'label' => 'Mixer',
+                'alias' => 'Mixer',
+                'description' => 'Log in with Mixer'
+            ],            
         ];
     }
 

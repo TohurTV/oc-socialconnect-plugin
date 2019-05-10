@@ -18,7 +18,7 @@ class DiscordProvider extends Provider {
                     'nickname' => sprintf('%s#%s', $user['username'], $user['discriminator']),
                     'name' => $user['username'],
                     'email' => (array_key_exists('email', $user)) ? $user['email'] : null,
-                    'avatar' => (is_null($user['avatar'])) ? null : sprintf('https://cdn.discordapp.com/avatars/%s/%s.jpg', $user['id'], $user['avatar']),
+                    'avatar_original' => (is_null($user['avatar'])) ? null : sprintf('https://cdn.discordapp.com/avatars/%s/%s.jpg', $user['id'], $user['avatar']),
         ]);
     }
 

@@ -18,7 +18,6 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
         });
 
         Schema::table('users', function($table) {
-            $table->string('avatar')->nullable();      #Avatar collumn
             $table->string('tohur_socialconnect_user_providers')->nullable();
         });
     }
