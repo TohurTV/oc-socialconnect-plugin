@@ -7,3 +7,5 @@
     - Fixed Avatars for Providers and added Twitch and Mixer to providers
 1.0.3:
     - Some backend fixes
+1.0.4:
+    - Integration with upcoming UserExtended plugin version and couple backend changes

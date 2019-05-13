@@ -8,6 +8,7 @@ use Event;
 use URL;
 use Illuminate\Foundation\AliasLoader;
 use System\Classes\PluginBase;
+use System\Classes\SettingsManager;
 use RainLab\User\Models\User;
 use RainLab\User\Controllers\Users as UsersController;
 use Backend\Widgets\Form;
@@ -45,6 +46,7 @@ class Plugin extends PluginBase {
             'settings' => [
                 'label' => 'Social Connect',
                 'description' => 'Manage Social Login providers.',
+                'category' => SettingsManager::CATEGORY_USERS,
                 'icon' => 'icon-users',
                 'class' => 'Tohur\SocialConnect\Models\Settings',
                 'order' => 600,
@@ -58,7 +60,17 @@ class Plugin extends PluginBase {
             'Tohur\SocialConnect\Components\SocialConnect' => 'socialconnect',
         ];
     }
+    /**
+     * Register method, called when the plugin is first registered.
+     * @return void
+     */
+    public function register() {
 
+        /*
+         * Registers the Social Connect UserExtended module
+         */
+        Module::register();
+    }
     public function boot() {
         // Load socialite
         App::register(\SocialiteProviders\Manager\ServiceProvider::class);
