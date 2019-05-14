@@ -9,3 +9,6 @@
     - Some backend fixes
 1.0.4:
     - Integration with upcoming UserExtended plugin version and couple backend changes
+1.0.5:
+    - Quick fix for the case UserExtened is not installed
+    

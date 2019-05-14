@@ -60,6 +60,7 @@ class Plugin extends PluginBase {
             'Tohur\SocialConnect\Components\SocialConnect' => 'socialconnect',
         ];
     }
+
     /**
      * Register method, called when the plugin is first registered.
      * @return void
@@ -69,8 +70,12 @@ class Plugin extends PluginBase {
         /*
          * Registers the Social Connect UserExtended module
          */
-        Module::register();
+
+        if (class_exists('Clake\UserExtended\Classes\UserExtended')) {
+            Module::register();
+        }
     }
+
     public function boot() {
         // Load socialite
         App::register(\SocialiteProviders\Manager\ServiceProvider::class);
@@ -173,7 +178,7 @@ class Plugin extends PluginBase {
                 'label' => 'Mixer',
                 'alias' => 'Mixer',
                 'description' => 'Log in with Mixer'
-            ],            
+            ],
         ];
     }
 
