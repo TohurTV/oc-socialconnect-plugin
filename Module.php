@@ -25,7 +25,7 @@ class Module extends UserExtended
 
     public $description = "Login with third party services";
 
-    public $version = "1.0.6";
+    public $version = "1.0.7";
 
     public function initialize() {}
 
