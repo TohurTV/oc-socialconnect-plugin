@@ -12,4 +12,6 @@
 1.0.5:
     - Quick fix for the case UserExtened is not installed
 1.0.6:
-    - Added Microsoft Live provider and further updates for UserExtended   
+    - Added Microsoft Live provider and further updates for UserExtended
+1.0.7:
+    - Changing Microsoft Provider

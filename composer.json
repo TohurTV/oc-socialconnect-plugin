@@ -14,7 +14,7 @@
         "socialiteproviders/discord": "2.0.*",
         "socialiteproviders/twitch": "5.0.*",
         "socialiteproviders/mixer": "1.0.*",
-        "socialiteproviders/microsoft-live": "3.0.*"
+        "socialiteproviders/microsoft-graph": "2.0.*"
     }
 }
 
