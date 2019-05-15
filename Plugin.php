@@ -10,6 +10,8 @@ use Illuminate\Foundation\AliasLoader;
 use System\Classes\PluginBase;
 use System\Classes\SettingsManager;
 use RainLab\User\Models\User;
+use RainLab\User\Models\UserGroup;
+use October\Rain\Support\Collection;
 use RainLab\User\Controllers\Users as UsersController;
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\Classes\ProviderManager;
@@ -85,6 +87,23 @@ class Plugin extends PluginBase {
             $model->hasMany['tohur_socialconnect_providers'] = ['Tohur\SocialConnect\Models\Provider'];
         });
 
+        User::extend(function($model) {
+            $model->addDynamicMethod('addUserGroup', function($group) use ($model) {
+                if ($group instanceof \October\Rain\Support\Collection) {
+                    return $model->groups()->saveMany($group);
+                }
+
+                if (is_string($group)) {
+                    $group = UserGroup::whereCode($group)->first();
+
+                    return $model->groups()->save($group);
+                }
+
+                if ($group instanceof \RainLab\User\Models\UserGroup) {
+                    return $model->groups()->save($group);
+                }
+            });
+        });
 
         // Add 'Social Logins' column to users list
         UsersController::extendListColumns(function($widget, $model) {
@@ -149,21 +168,26 @@ class Plugin extends PluginBase {
 
     function register_tohur_socialconnect_providers() {
         return [
+            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Facebook' => [
+                'label' => 'Facebook',
+                'alias' => 'Facebook',
+                'description' => 'Log in with Facebook'
+            ], 
+            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Twitter' => [
+                'label' => 'Twitter',
+                'alias' => 'Twitter',
+                'description' => 'Log in with Twitter'
+            ],            
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Google' => [
                 'label' => 'Google',
                 'alias' => 'Google',
                 'description' => 'Log in with Google'
             ],
-            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Twitter' => [
-                'label' => 'Twitter',
-                'alias' => 'Twitter',
-                'description' => 'Log in with Twitter'
-            ],
-            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Facebook' => [
-                'label' => 'Facebook',
-                'alias' => 'Facebook',
-                'description' => 'Log in with Facebook'
-            ],
+            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Microsoft' => [
+                'label' => 'Microsoft',
+                'alias' => 'Microsoft',
+                'description' => 'Log in with Microsoft'
+            ],            
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Discord' => [
                 'label' => 'Discord',
                 'alias' => 'Discord',

@@ -25,7 +25,7 @@ class Module extends UserExtended
 
     public $description = "Login with third party services";
 
-    public $version = "1.0.4";
+    public $version = "1.0.6";
 
     public function initialize() {}
 
@@ -39,8 +39,7 @@ class Module extends UserExtended
     public function injectComponents()
     {
         return [
-            // Insert your components here with the format shown below
-            //'Clake\UserExtended\Components\Account' => 'account',
+            'Tohur\SocialConnect\Components\UESocialLogin'    => 'uesociallogin',
         ];
     }
 

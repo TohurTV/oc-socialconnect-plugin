@@ -14,7 +14,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use October\Rain\Auth\Models\User;
+use RainLab\User\Models\UserGroup;
 use RainLab\User\Models\Settings as UserSettings;
+use Clake\Userextended\Models\Settings as UESettings;
 use System\Models\File;
 
 class UserManager {
@@ -126,6 +128,7 @@ class UserManager {
 
         $user = Auth::register($user_details, true);
         $this->attachAvatar($user, $user_details);
+        $this->attachGroup($user);
 
         return $this->attachProvider($user, $provider_details);
     }
@@ -212,6 +215,24 @@ class UserManager {
         $provider->save();
 
         return $user;
+    }
+
+    /**
+     * Attach a group to a user if UserExtended is installed
+     *
+     * @param  User   $user
+     * @param  array  $provider_details ['id'=>..., 'token'=>...]
+     *
+     * @return User
+     */
+    public function attachGroup(User $user, array $options = ['default' => true]) {
+
+        if (class_exists('Clake\UserExtended\Models\Settings')) {
+            $defaultGroup = UESettings::get('default_group', '');
+            if (!empty($defaultGroup) && $options['default']) {
+                $user->addUserGroup(UserGroup::whereCode($defaultGroup)->first());
+            }
+        }
     }
 
 }
