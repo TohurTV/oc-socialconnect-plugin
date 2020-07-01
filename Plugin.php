@@ -195,11 +195,6 @@ class Plugin extends PluginBase {
                 'alias' => 'Twitch',
                 'description' => 'Log in with Twitch'
             ],
-            '\\Tohur\\SocialConnect\\SocialConnectProviders\\Mixer' => [
-                'label' => 'Mixer',
-                'alias' => 'Mixer',
-                'description' => 'Log in with Mixer'
-            ],
         ];
     }
 
