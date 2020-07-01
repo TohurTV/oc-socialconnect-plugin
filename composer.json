@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "laravel/socialite": "3.1.*",
+        "laravel/socialite": "3.4.*",
         "socialiteproviders/discord": "2.0.*",
         "socialiteproviders/twitch": "5.0.*",
         "socialiteproviders/mixer": "1.0.*",
