@@ -73,9 +73,6 @@ class Plugin extends PluginBase {
          * Registers the Social Connect UserExtended module
          */
 
-        if (class_exists('Clake\UserExtended\Classes\UserExtended')) {
-            Module::register();
-        }
     }
 
     public function boot() {
