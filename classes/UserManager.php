@@ -127,7 +127,6 @@ class UserManager {
 
         $user = Auth::register($user_details, true);
         $this->attachAvatar($user, $user_details);
-        $this->attachGroup($user);
 
         return $this->attachProvider($user, $provider_details);
     }
