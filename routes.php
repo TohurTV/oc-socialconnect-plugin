@@ -42,13 +42,12 @@ Route::get('socialconnect/{provider}/callback', ['as' => 'tohur_socialconnect_pr
 
             return Redirect::to($error_redirect)->withErrors([$e->getMessage()]);
         }
-        ksort($provider_response['token']);
-        
+
         $provider_details = [
             'provider_id' => $provider_name,
             'provider_token' => $provider_response['token'],
         ];
-        $user_details = $provider_response['profile'];
+        $user_details = array_except($provider_response, 'token');
 
         // Backend logins
         if ($success_redirect == Backend::url()) {
