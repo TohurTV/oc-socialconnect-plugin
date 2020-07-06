@@ -73,16 +73,26 @@ class Twitter extends SocialConnectProviderBase {
             //    'span' => 'right',
             //    'tab' => 'Twitter',
             //],
-            'providers[Twitter][identifier]' => [
-                'label' => 'API Key',
+            'providers[Twitter][consumer_key]' => [
+                'label' => 'Consumer API Key',
                 'type' => 'text',
                 'tab' => 'Twitter',
             ],
-            'providers[Twitter][secret]' => [
-                'label' => 'API Secret',
+            'providers[Twitter][consumer_secret]' => [
+                'label' => 'Consumer API Secret',
                 'type' => 'text',
                 'tab' => 'Twitter',
             ],
+            'providers[Twitter][access_token]' => [
+                'label' => 'Access token',
+                'type' => 'text',
+                'tab' => 'Twitter',
+            ],
+            'providers[Twitter][access_secret]' => [
+                'label' => 'Access token secret',
+                'type' => 'text',
+                'tab' => 'Twitter',
+            ],            
                 ], 'primary');
     }
 
