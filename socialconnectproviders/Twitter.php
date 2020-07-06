@@ -73,12 +73,12 @@ class Twitter extends SocialConnectProviderBase {
             //    'span' => 'right',
             //    'tab' => 'Twitter',
             //],
-            'providers[Twitter][consumer_key]' => [
+            'providers[Twitter][identifier]' => [
                 'label' => 'Consumer API Key',
                 'type' => 'text',
                 'tab' => 'Twitter',
             ],
-            'providers[Twitter][consumer_secret]' => [
+            'providers[Twitter][secret]' => [
                 'label' => 'Consumer API Secret',
                 'type' => 'text',
                 'tab' => 'Twitter',
