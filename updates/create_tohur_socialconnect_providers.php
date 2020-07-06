@@ -19,6 +19,7 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
 
         Schema::table('users', function($table) {
             $table->string('tohur_socialconnect_user_providers')->nullable();
+            $table->string('tohur_socialconnect_twitchid')->nullable();
         });
     }
 
@@ -26,6 +27,7 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
         Schema::drop('tohur_socialconnect_providers');
         Schema::table('users', function($table) {
             $table->dropColumn('tohur_socialconnect_user_providers');
+            $table->dropColumn('tohur_socialconnect_twitchid');
         });
     }
 

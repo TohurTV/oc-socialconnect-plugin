@@ -5,7 +5,7 @@ namespace Tohur\SocialConnect\SocialConnectProviders;
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
-use Laravel\Socialite\One\TwitterProvider;
+use Tohur\SocialConnect\Classes\TwitterProvider;
 use League\OAuth1\Client\Server\Twitter as TwitterServer;
 use URL;
 

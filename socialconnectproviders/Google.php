@@ -3,9 +3,9 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
+use Tohur\SocialConnect\Classes\GoogleProvider;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
-use Laravel\Socialite\Two\GoogleProvider;
 use URL;
 
 class Google extends SocialConnectProviderBase {

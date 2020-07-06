@@ -3,9 +3,9 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
+use Tohur\SocialConnect\Classes\FacebookProvider;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
-use Laravel\Socialite\Two\FacebookProvider;
 use URL;
 
 class Facebook extends SocialConnectProviderBase {

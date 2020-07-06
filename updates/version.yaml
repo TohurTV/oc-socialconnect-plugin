@@ -20,4 +20,6 @@
 1.0.9:
     - Deleting Mixer Due to shutdown, Updating Sociallite and all the included providers
 1.0.10:
-    - Big Fix for Twitch Login. more small updates to come to fix other bugs before 1.1 comes    
+    - Big Fix for Twitch Login. more small updates to come to fix other bugs before 1.1 comes
+1.0.11:
+    - Fixing Facebook, Google, Twitter, Microsoft Providers with Proper User Mapping in OctoberCMS. This should be Last update before 1.1
