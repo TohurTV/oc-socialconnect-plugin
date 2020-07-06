@@ -33,7 +33,7 @@ class TwitterProvider extends TwitterProvider {
             'nickname' => $user->nickname,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => $user->imageUrl
+            'avatar_original' => $user->imageUrl
         ]);
     }
 }

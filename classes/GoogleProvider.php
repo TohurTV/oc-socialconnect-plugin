@@ -20,7 +20,7 @@ class GoogleProvider extends GoogleProvider {
             'nickname' => Arr::get($user, 'nickname'),
             'name' => Arr::get($user, 'name'),
             'email' => Arr::get($user, 'email'),
-            'avatar' => $avatarUrl
+            'avatar_original' => $avatarUrl
         ]);
     }
 

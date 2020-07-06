@@ -20,7 +20,7 @@ class FacebookProvider extends FacebookProvider {
             'nickname' => isset($user['name']) ? $user['name'] : null,
             'name' => isset($user['name']) ? $user['name'] : null,
             'email' => isset($user['email']) ? $user['email'] : null,
-            'avatar' => $avatarUrl.'?type=normal'
+            'avatar_original' => $avatarUrl.'?type=normal'
         ]);
     }
 
