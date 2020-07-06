@@ -13,7 +13,8 @@
         "laravel/socialite": "3.4.*",
         "socialiteproviders/discord": "2.0.*",
         "socialiteproviders/twitch": "5.2.*",
-        "socialiteproviders/microsoft-graph": "3.1.*"
+        "socialiteproviders/microsoft-graph": "3.1.*",
+        "tohur/twitter": "dev-master"
     }
 }
 
