@@ -27,3 +27,5 @@
     - Quick Fixes. This should be Last update before 1.1
 1.0.13:
     - One Last update before 1.1
+1.1.0:
+    - Moving all third party social apis in to social connect for all my plugins which use them
