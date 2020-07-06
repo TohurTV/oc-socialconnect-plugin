@@ -29,3 +29,5 @@
     - One Last update before 1.1
 1.1.0:
     - Moving all third party social apis in to social connect for all my plugins which use them
+1.1.1:
+    - composer fix

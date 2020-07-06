@@ -1,0 +1,20 @@
+{
+    "name": "tohur/oc-socialconnect-plugin",
+    "type": "october-plugin",
+    "description": "Allows visitors to register/sign in with their discord accounts for October CMS",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joshua Webb",
+            "email": "tohur@tohur.me"
+        }
+    ],
+    "require": {
+        "laravel/socialite": "3.4.*",
+        "socialiteproviders/discord": "2.0.*",
+        "socialiteproviders/twitch": "5.0.*",
+        "socialiteproviders/microsoft-graph": "3.1.*",
+        "tohur/twitter" : "dev-master"
+    }
+}
+
