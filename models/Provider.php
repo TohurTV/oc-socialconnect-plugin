@@ -23,7 +23,7 @@ class Provider extends Model {
     /**
      * @var array The attributes that are mass assignable.
      */
-    protected $fillable = ['user_id', 'provider_id', 'provider_token','provider_refreshToken', 'provider_expiresIn'];
+    protected $fillable = ['user_id', 'provider_id', 'provider_userid', 'provider_token','provider_refreshToken', 'provider_expiresIn'];
 
     /**
      * @var array Relations
