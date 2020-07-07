@@ -2,7 +2,7 @@
 
 namespace Tohur\SocialConnect\Classes\Apis;
 
-use ApplicationException;
+use October\Rain\Exception\ApplicationException;
 use Tohur\Twitter\TwitterAPI;
 
 class TwitterClient {

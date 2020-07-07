@@ -2,6 +2,8 @@
 
 namespace Tohur\SocialConnect\Classes\Apis;
 
+use October\Rain\Exception\ApplicationException;
+
 class TwitchAPI {
 
     /**
@@ -50,7 +52,7 @@ class TwitchAPI {
     function helixApi($url) {
         $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
         if (!strlen($twitchAPISettings['Twitch']['client_id']))
-            throw new ApplicationException('Twitter API access is not configured. Please configure it on the Social Connect Settings Twitter tab.');
+            throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
         $client_id = $twitchAPISettings['Twitch']['client_id'];
         $client_secret = $twitchAPISettings['Twitch']['client_secret'];
         $count = \DB::table('tohur_twitchintergration_apptokens')->count();
