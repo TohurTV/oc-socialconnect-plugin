@@ -7,7 +7,7 @@ use October\Rain\Exception\ApplicationException;
 class TwitchAPI {
 
     /**
-     * @var string Twitch helix API Base URL
+     * @var string Twitch Authencation Base URL
      */
     public $oAuthbaseUrl = 'https://id.twitch.tv/oauth2/token';
 

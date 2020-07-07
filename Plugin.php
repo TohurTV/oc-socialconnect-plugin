@@ -75,6 +75,35 @@ class Plugin extends PluginBase {
 
     }
 
+    public function registerSchedule($schedule) {
+        $schedule->call(function () {
+            $twitch = new TwitchAPI();
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+            $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+            $expiresIn = $tokens[0]->expires_in;
+            $current = Carbon::now();
+            if ($tokens[0]->updated_at == null) {
+                $time = $tokens[0]->created_at;
+            } else {
+                $time = $tokens[0]->updated_at;
+            }
+            $expired = Carbon::parse($time)->addSeconds($expiresIn);
+
+            if ($current > $expired) {
+                $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=refresh_token&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+                $accessToken = $tokenRequest['access_token'];
+                $tokenExpires = $expiresIn;
+                \Db::table('tohur_socialconnect_twitch_apptokens')
+                    ->where('id', 1)
+                    ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
+            }
+        })->daily();
+    }
+
     public function boot() {
         // Load socialite
         App::register(\SocialiteProviders\Manager\ServiceProvider::class);
@@ -144,7 +173,7 @@ class Plugin extends PluginBase {
                     'label' => 'Social Providers',
                     'type' => 'Tohur\SocialConnect\FormWidgets\LoginProviders',
                 ],
-                    ], 'secondary');
+            ], 'secondary');
         });
 
         // Add backend login provider integration
@@ -169,12 +198,12 @@ class Plugin extends PluginBase {
                 'label' => 'Facebook',
                 'alias' => 'Facebook',
                 'description' => 'Log in with Facebook'
-            ], 
+            ],
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Twitter' => [
                 'label' => 'Twitter',
                 'alias' => 'Twitter',
                 'description' => 'Log in with Twitter'
-            ],            
+            ],
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Google' => [
                 'label' => 'Google',
                 'alias' => 'Google',
@@ -184,7 +213,7 @@ class Plugin extends PluginBase {
                 'label' => 'Microsoft',
                 'alias' => 'Microsoft',
                 'description' => 'Log in with Microsoft'
-            ],            
+            ],
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Discord' => [
                 'label' => 'Discord',
                 'alias' => 'Discord',
