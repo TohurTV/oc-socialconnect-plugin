@@ -55,17 +55,17 @@ class TwitchAPI {
             throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
         $client_id = $twitchAPISettings['Twitch']['client_id'];
         $client_secret = $twitchAPISettings['Twitch']['client_secret'];
-        $count = \DB::table('tohur_twitchintergration_apptokens')->count();
+        $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
         if ($count == 0) {
             $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
             $accessToken = $tokenRequest['access_token'];
             $tokenExpires = $tokenRequest['expires_in'];
-            \Db::table('tohur_twitchintergration_apptokens')->insert([
+            \Db::table('tohur_socialconnect_twitch_apptokens')->insert([
                 ['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'created_at' => now()]
             ]);
             $token = $accessToken;
         } else {
-            $getToken = \DB::select('select * from tohur_twitchintergration_apptokens where id = ?', array(1));
+            $getToken = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
             $token = $getToken[0]->access_token;
         }
 

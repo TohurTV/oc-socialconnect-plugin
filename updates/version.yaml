@@ -31,3 +31,5 @@
     - Moving all third party social apis in to social connect for all my plugins which use them
 1.1.1:
     - composer fix
+1.1.2:
+    - Twitch API fix
