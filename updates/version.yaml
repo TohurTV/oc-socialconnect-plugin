@@ -37,3 +37,5 @@
     - Moving Access token refresh functions to Social Connect
 1.1.4:
     - Adding Bit Leaderboard Support
+1.1.5:
+    - Route Fix to store Refesh tokens

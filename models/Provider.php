@@ -13,7 +13,7 @@ use October\Rain\Support\Markdown;
  */
 class Provider extends Model {
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * @var string The database table used by the model.
@@ -23,7 +23,7 @@ class Provider extends Model {
     /**
      * @var array The attributes that are mass assignable.
      */
-    protected $fillable = ['user_id', 'provider_id', 'provider_token'];
+    protected $fillable = ['user_id', 'provider_id', 'provider_token','provider_refreshToken', 'provider_expiresIn'];
 
     /**
      * @var array Relations
