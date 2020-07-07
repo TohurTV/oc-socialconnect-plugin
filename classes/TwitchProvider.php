@@ -7,10 +7,17 @@ use Laravel\Socialite\Two\ProviderInterface;
 use SocialiteProviders\Manager\OAuth2\User;
 use Socialite;
 use URL;
+use Tohur\SocialConnect\Models\Settings;
 use SocialiteProviders\Twitch\Provider;
 
 class TwitchProvider extends Provider {
 
+    
+     /**
+     * {@inheritdoc}
+     */
+    protected $scopes = ['user:read:email', 'bits:read', 'channel:read:subscriptions'];
+    
     /**
      * {@inheritdoc}
      */

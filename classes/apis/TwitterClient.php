@@ -20,7 +20,7 @@ class TwitterClient {
 
     public function __construct() {
         $twitterAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-        if (!strlen($twitterAPISettings['Twitch']['client_id']))
+        if (!strlen($twitterAPISettings['Twitter']['access_token']))
             throw new ApplicationException('Twitter API access is not configured. Please configure it on the Social Connect Settings Twitter tab.');
 // settings for twitter api connection
         $settings = array(
