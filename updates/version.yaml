@@ -33,3 +33,5 @@
     - composer fix
 1.1.2:
     - Twitch API fix
+1.1.3:
+    - Moving Access token refresh functions to Social Connect
