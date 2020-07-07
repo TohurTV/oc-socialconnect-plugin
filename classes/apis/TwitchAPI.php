@@ -4,7 +4,8 @@ namespace Tohur\SocialConnect\Classes\Apis;
 
 use October\Rain\Exception\ApplicationException;
 
-class TwitchAPI {
+class TwitchAPI
+{
 
     /**
      * @var string Twitch Authencation Base URL
@@ -32,7 +33,8 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixTokenRequest($url) {
+    function helixTokenRequest($url)
+    {
         $ch = curl_init($url);
 
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -49,7 +51,8 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixApi($url) {
+    function helixApi($url, $acessToken = null)
+    {
         $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
         if (!strlen($twitchAPISettings['Twitch']['client_id']))
             throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
@@ -64,6 +67,8 @@ class TwitchAPI {
                 ['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'created_at' => now()]
             ]);
             $token = $accessToken;
+        } elseif ($acessToken != null) {
+            $token = $acessToken;
         } else {
             $getToken = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
             $token = $getToken[0]->access_token;
@@ -92,7 +97,8 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    public function oldapiRequest($url) {
+    public function oldapiRequest($url)
+    {
         $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
         $client_id = $twitchAPISettings['Twitch']['client_id'];
         return file_get_contents($this->krakenbaseUrl . $url . "&client_id=" . $client_id . "&api_version=5");
@@ -106,7 +112,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getVideoList($channel, $limit = 10, $offset = 0, $broadcastType = 'archive') {
+    public function getVideoList($channel, $limit = 10, $offset = 0, $broadcastType = 'archive')
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/videos?user_id=" . $channelID . "&first=" . $limit . "&type=" . $broadcastType), true);
@@ -121,7 +128,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getClipList($channel, $limit = 10, $offset = 0, $period = 'all') {
+    public function getClipList($channel, $limit = 10, $offset = 0, $period = 'all')
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/clips?broadcaster_id=" . $channelID . "&first=" . $limit), true);
@@ -136,20 +144,22 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getBitsLeaderboard($acessToken = null, $clientID = null, $limit = 10, $period = 'all') {
-        $object = json_decode($this->helixApi($this->helixbaseUrl . "/bits/leaderboard?count=" . $limit, $clientID, $acessToken), true);
+    public function getBitsLeaderboard($acessToken = null, $limit = 10, $period = 'all')
+    {
+        $object = json_decode($this->helixApi($this->helixbaseUrl . "/bits/leaderboard?count=" . $limit, $acessToken), true);
         return $object['data'];
     }
 
     /**
-     * Get Current Channel info 
+     * Get Current Channel info
      *
      * @param string $type
      * @param int $limit
      * @param int $offset
      * @return string
      */
-    public function getChannelinfo($channel) {
+    public function getChannelinfo($channel)
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID), true);
@@ -164,7 +174,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getUser($channel) {
+    public function getUser($channel)
+    {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users?login=" . $channel), true);
         return $object['data'];
     }
@@ -177,7 +188,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getFollowcount($channel) {
+    public function getFollowcount($channel)
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID), true);
@@ -192,7 +204,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getLatestfollower($channel) {
+    public function getLatestfollower($channel)
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID), true);
@@ -207,7 +220,8 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getStream($channel) {
+    public function getStream($channel)
+    {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/streams?user_id=" . $channelID), true);
@@ -220,7 +234,8 @@ class TwitchAPI {
      * @param string $channel Name of the Twitch Channel
      * @return bool
      */
-    public function isChannelLive($channel) {
+    public function isChannelLive($channel)
+    {
         $apiCall = $this->getStream($channel);
         if ($apiCall == null) {
             return false;
