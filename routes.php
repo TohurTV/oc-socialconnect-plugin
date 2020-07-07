@@ -50,6 +50,7 @@ Route::get('socialconnect/{provider}/callback', ['as' => 'tohur_socialconnect_pr
     } else {
         $provider_details = [
             'provider_id' => $provider_name,
+            'provider_userid' => $provider_response['id'],
             'provider_token' => $provider_response['token'],
             'provider_refreshToken' => $provider_response['refreshToken'],
             'provider_expiresIn' => $provider_response['expiresIn'],

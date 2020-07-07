@@ -13,13 +13,14 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index()->nullable();
             $table->string('provider_id')->default('');
+            $table->string('provider_userid')->default('');
             $table->string('provider_token')->default('');
             $table->string('provider_refreshToken')->default('');
             $table->string('provider_expiresIn')->default('');
             $table->timestamps();
             $table->index(['provider_id', 'provider_token'], 'provider_id_token_index');
         });
-        
+
         Schema::create('tohur_socialconnect_twitch_apptokens', function($table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -27,7 +28,7 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
             $table->string('expires_in', 100)->default('')->index();
             $table->timestamps();
         });
-        
+
         Schema::table('users', function($table) {
             $table->string('tohur_socialconnect_user_providers')->nullable();
             $table->string('tohur_socialconnect_twitchid')->nullable();
