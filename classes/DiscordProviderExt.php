@@ -9,7 +9,7 @@ use Socialite;
 use URL;
 use SocialiteProviders\Discord\Provider;
 
-class DiscordProvider extends Provider {
+class DiscordProviderExt extends Provider {
 
     /**
      * {@inheritdoc}
@@ -17,6 +17,7 @@ class DiscordProvider extends Provider {
     protected function mapUserToObject(array $user) {
         return (new User())->setRaw($user)->map([
                     'id' => $user['id'],
+                    'username' => $user['username'],
                     'nickname' => sprintf('%s#%s', $user['username'], $user['discriminator']),
                     'name' => $user['username'],
                     'email' => (array_key_exists('email', $user)) ? $user['email'] : null,

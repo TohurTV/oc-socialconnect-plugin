@@ -9,7 +9,7 @@ use Socialite;
 use URL;
 use SocialiteProviders\Graph\Provider;
 
-class MicrosoftProvider extends Provider {
+class MicrosoftProviderExt extends Provider {
 
     /**
      * {@inheritdoc}

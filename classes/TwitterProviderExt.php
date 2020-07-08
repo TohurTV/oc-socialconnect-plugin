@@ -8,7 +8,7 @@ use Socialite;
 use URL;
 use Laravel\Socialite\One\TwitterProvider;
 
-class TwitterProvider extends TwitterProvider {
+class TwitterProviderExt extends TwitterProvider {
 
     /**
      * {@inheritdoc}
@@ -31,6 +31,7 @@ class TwitterProvider extends TwitterProvider {
 
         return $instance->map([
             'id' => $user->uid,
+            'username' => $user->nickname,
             'nickname' => $user->nickname,
             'name' => $user->name,
             'email' => $user->email,

@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
-use Tohur\SocialConnect\Classes\DiscordProvider;
+use Tohur\SocialConnect\Classes\DiscordProviderExt;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
 use URL;
@@ -29,7 +29,7 @@ class Discord extends SocialConnectProviderBase {
             $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             $providers['Discord']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Discord'], true);
             $provider = Socialite::buildProvider(
-                            DiscordProvider::class, (array) @$providers['Discord']
+                            DiscordProviderExt::class, (array) @$providers['Discord']
             );
             return $provider;
         });

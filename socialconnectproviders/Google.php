@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
-use Tohur\SocialConnect\Classes\GoogleProvider;
+use Tohur\SocialConnect\Classes\GoogleProviderExt;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
 use URL;
@@ -27,7 +27,7 @@ class Google extends SocialConnectProviderBase {
             $providers['Google']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Google'], true);
 
             return Socialite::buildProvider(
-                            GoogleProvider::class, (array) @$providers['Google']
+                            GoogleProviderExt::class, (array) @$providers['Google']
             );
         });
     }

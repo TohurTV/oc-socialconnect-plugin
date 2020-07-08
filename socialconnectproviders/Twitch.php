@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
-use Tohur\SocialConnect\Classes\TwitchProvider;
+use Tohur\SocialConnect\Classes\TwitchProviderExt;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
 use URL;
@@ -29,7 +29,7 @@ class Twitch extends SocialConnectProviderBase {
             $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             $providers['Twitch']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Twitch'], true);
             $provider = Socialite::buildProvider(
-                            TwitchProvider::class, (array) @$providers['Twitch']
+                            TwitchProviderExt::class, (array) @$providers['Twitch']
             );
             return $provider;
         });

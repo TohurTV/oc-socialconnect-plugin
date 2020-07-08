@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
-use Tohur\SocialConnect\Classes\FacebookProvider;
+use Tohur\SocialConnect\Classes\FacebookProviderExt;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
 use URL;
@@ -27,7 +27,7 @@ class Facebook extends SocialConnectProviderBase {
             $providers['Facebook']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Facebook'], true);
 
             return Socialite::buildProvider(
-                            FacebookProvider::class, (array) @$providers['Facebook']
+                            FacebookProviderExt::class, (array) @$providers['Facebook']
             );
         });
     }

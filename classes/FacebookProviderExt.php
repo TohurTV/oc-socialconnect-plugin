@@ -9,7 +9,7 @@ use Socialite;
 use URL;
 use Laravel\Socialite\Two\FacebookProvider;
 
-class FacebookProvider extends FacebookProvider {
+class FacebookProviderExt extends FacebookProvider {
 
     /**
      * {@inheritdoc}
@@ -19,6 +19,7 @@ class FacebookProvider extends FacebookProvider {
 
         return (new User)->setRaw($user)->map([
             'id' => $user['id'],
+            'username' => isset($user['name']) ? $user['name'] : null,
             'nickname' => isset($user['name']) ? $user['name'] : null,
             'name' => isset($user['name']) ? $user['name'] : null,
             'email' => isset($user['email']) ? $user['email'] : null,

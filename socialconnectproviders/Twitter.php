@@ -5,7 +5,7 @@ namespace Tohur\SocialConnect\SocialConnectProviders;
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
-use Tohur\SocialConnect\Classes\TwitterProvider;
+use Tohur\SocialConnect\Classes\TwitterProviderExt;
 use League\OAuth1\Client\Server\Twitter as TwitterServer;
 use URL;
 
@@ -27,11 +27,11 @@ class Twitter extends SocialConnectProviderBase {
             $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             $providers['Twitter']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Twitter'], true);
 
-            return new TwitterProvider(
+            return new TwitterProviderExt(
                     app()->request, new TwitterServer($providers['Twitter'])
             );
             return Socialite::buildProvider(
-                            TwitterProvider::class, (array) @$providers['Twitter']
+                            TwitterProviderExt::class, (array) @$providers['Twitter']
             );
         });
     }

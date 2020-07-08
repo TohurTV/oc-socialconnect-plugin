@@ -10,7 +10,7 @@ use URL;
 use Tohur\SocialConnect\Models\Settings;
 use SocialiteProviders\Twitch\Provider;
 
-class TwitchProvider extends Provider {
+class TwitchProviderExt extends Provider {
 
     
      /**
@@ -25,6 +25,7 @@ class TwitchProvider extends Provider {
         $user = $user['data']['0'];
         return (new User())->setRaw($user)->map([
                     'id' => $user['id'],
+                    'username' => $user['login'],
                     'nickname' => $user['display_name'],
                     'name' => $user['display_name'],
                     'email' => Arr::get($user, 'email'),

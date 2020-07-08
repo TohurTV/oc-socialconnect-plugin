@@ -9,7 +9,7 @@ use Socialite;
 use URL;
 use Laravel\Socialite\Two\GoogleProvider;
 
-class GoogleProvider extends GoogleProvider {
+class GoogleProviderExt extends GoogleProvider {
 
     /**
      * {@inheritdoc}
@@ -19,6 +19,7 @@ class GoogleProvider extends GoogleProvider {
 
         return (new User)->setRaw($user)->map([
             'id' => $user['id'],
+            'username' => Arr::get($user, 'nickname'),
             'nickname' => Arr::get($user, 'nickname'),
             'name' => Arr::get($user, 'name'),
             'email' => Arr::get($user, 'email'),

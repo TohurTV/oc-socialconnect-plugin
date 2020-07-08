@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\SocialConnectProviders;
 
 use Backend\Widgets\Form;
-use Tohur\SocialConnect\Classes\MicrosoftProvider;
+use Tohur\SocialConnect\Classes\MicrosoftProviderExt;
 use Tohur\SocialConnect\SocialConnectProviders\SocialConnectProviderBase;
 use Socialite;
 use URL;
@@ -29,7 +29,7 @@ class Microsoft extends SocialConnectProviderBase {
             $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             $providers['Microsoft']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Microsoft'], true);
             $provider = Socialite::buildProvider(
-                            MicrosoftProvider::class, (array) @$providers['Microsoft']
+                            MicrosoftProviderExt::class, (array) @$providers['Microsoft']
             );
             return $provider;
         });
