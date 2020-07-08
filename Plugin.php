@@ -115,7 +115,7 @@ class Plugin extends PluginBase
                     }
                 }
             }
-        })->hourly();
+        })->everyFiveMinutes();
 
         $schedule->call(function () {
             $twitch = new TwitchAPI();
@@ -140,7 +140,7 @@ class Plugin extends PluginBase
                 $expired = Carbon::parse($time)->addSeconds($expiresIn);
 
                 if ($current > $expired) {
-                    $revokeRequest = json_decode($twitch->helixTokenRequest("https://id.twitch.tv/oauth2/revoke?client_id=" . $client_id . "&token=" . $tokens[0]->access_token . ""), true);
+                    $revokeRequest = json_decode($twitch->helixTokenRequest($twitch->oRevokebaseUrl . "?client_id=" . $client_id . "&token=" . $tokens[0]->access_token . ""), true);
                     $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=client_credentials&client_id=" . $client_id . "&client_secret=" . $client_secret . "&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
                     $accessToken = $tokenRequest['access_token'];
                     $tokenExpires = $tokenRequest['expires_in'];

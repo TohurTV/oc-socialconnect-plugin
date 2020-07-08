@@ -13,6 +13,11 @@ class TwitchAPI
     public $oAuthbaseUrl = 'https://id.twitch.tv/oauth2/token';
 
     /**
+     * @var string Twitch Authencation Base URL
+     */
+    public $oRevokebaseUrl = 'https://id.twitch.tv/oauth2/revoke';
+
+    /**
      * @var string Twitch Kraken API Base URL
      */
     public $krakenbaseUrl = 'https://api.twitch.tv/kraken';
