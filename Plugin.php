@@ -3,7 +3,6 @@
 namespace Tohur\SocialConnect;
 
 use App;
-use Backend;
 use Event;
 use URL;
 use Illuminate\Foundation\AliasLoader;
@@ -11,9 +10,10 @@ use System\Classes\PluginBase;
 use System\Classes\SettingsManager;
 use RainLab\User\Models\User;
 use RainLab\User\Models\UserGroup;
-use October\Rain\Support\Collection;
+use Carbon\Carbon;
 use RainLab\User\Controllers\Users as UsersController;
 use Backend\Widgets\Form;
+use Tohur\SocialConnect\Classes\Apis\TwitchAPI;
 use Tohur\SocialConnect\Classes\ProviderManager;
 
 /**
@@ -23,7 +23,8 @@ use Tohur\SocialConnect\Classes\ProviderManager;
  * https://cartalyst.com/manual/sentry-social
  *
  */
-class Plugin extends PluginBase {
+class Plugin extends PluginBase
+{
 
     // Make this plugin run on updates page
     public $elevated = true;
@@ -34,7 +35,8 @@ class Plugin extends PluginBase {
      *
      * @return array
      */
-    public function pluginDetails() {
+    public function pluginDetails()
+    {
         return [
             'name' => 'Social Connect',
             'description' => 'Allows visitors to register/sign in with their social media accounts',
@@ -43,7 +45,8 @@ class Plugin extends PluginBase {
         ];
     }
 
-    public function registerSettings() {
+    public function registerSettings()
+    {
         return [
             'settings' => [
                 'label' => 'Social Connect',
@@ -57,7 +60,8 @@ class Plugin extends PluginBase {
         ];
     }
 
-    public function registerComponents() {
+    public function registerComponents()
+    {
         return [
             'Tohur\SocialConnect\Components\SocialConnect' => 'socialconnect',
         ];
@@ -67,15 +71,12 @@ class Plugin extends PluginBase {
      * Register method, called when the plugin is first registered.
      * @return void
      */
-    public function register() {
-
-        /*
-         * Registers the Social Connect UserExtended module
-         */
-
+    public function register()
+    {
     }
 
-    public function registerSchedule($schedule) {
+    public function registerSchedule($schedule)
+    {
         $schedule->call(function () {
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
@@ -83,38 +84,86 @@ class Plugin extends PluginBase {
                 throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
             $client_id = $twitchAPISettings['Twitch']['client_id'];
             $client_secret = $twitchAPISettings['Twitch']['client_secret'];
-            $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
-            $expiresIn = $tokens[0]->expires_in;
-            $current = Carbon::now();
-            if ($tokens[0]->updated_at == null) {
-                $time = $tokens[0]->created_at;
-            } else {
-                $time = $tokens[0]->updated_at;
-            }
-            $expired = Carbon::parse($time)->addSeconds($expiresIn);
 
-            if ($current > $expired) {
-                $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=refresh_token&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
-                $accessToken = $tokenRequest['access_token'];
-                $tokenExpires = $expiresIn;
-                \Db::table('tohur_socialconnect_twitch_apptokens')
-                    ->where('id', 1)
-                    ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
+            $count = \DB::table('tohur_socialconnect_providers')->count();
+            if ($count == 0) {
+                throw new ApplicationException('There are no twitch apptokens.');
+            } else {
+                $Tokens = \DB::table('tohur_socialconnect_providers')->get();
+                foreach ($Tokens as $Token) {
+                    if ($Token->provider_id == 'Twitch') {
+                        $expiresIn = $Token->provider_expiresIn;
+                        $current = Carbon::now();
+                        if ($Token->updated_at == null) {
+                            $time = $Token->created_at;
+                        } else {
+                            $time = $Token->updated_at;
+                        }
+                        $expired = Carbon::parse($time)->addSeconds($expiresIn);
+
+                        if ($current > $expired) {
+                            $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=refresh_token&refresh_token=" . $Token->provider_refreshToken . "&client_id=" . $client_id . "&client_secret=" . $client_secret . ""), true);
+                            $accessToken = $tokenRequest['access_token'];
+                            $refreshToken = $tokenRequest['refresh_token'];
+                            $tokenExpires = $expiresIn;
+                            \Db::table('tohur_socialconnect_providers')
+                                ->where('provider_id', '=', 'Twitch')
+                                ->update(['provider_token' => $accessToken, 'provider_refreshToken' => $refreshToken, 'provider_expiresIn' => $tokenExpires, 'updated_at' => now()]);
+                        }
+                    } else {
+
+                    }
+                }
             }
-        })->daily();
+        })->hourly();
+
+        $schedule->call(function () {
+            $twitch = new TwitchAPI();
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+
+            $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
+            if ($count == 0) {
+                throw new ApplicationException('There are no twitch apptokens.');
+            } else {
+                $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+                $expiresIn = $tokens[0]->expires_in;
+                $current = Carbon::now();
+                if ($tokens[0]->updated_at == null) {
+                    $time = $tokens[0]->created_at;
+                } else {
+                    $time = $tokens[0]->updated_at;
+                }
+                $expired = Carbon::parse($time)->addSeconds($expiresIn);
+
+                if ($current > $expired) {
+                    $revokeRequest = json_decode($twitch->helixTokenRequest("https://id.twitch.tv/oauth2/revoke?client_id=" . $client_id . "&token=" . $tokens[0]->access_token . ""), true);
+                    $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=client_credentials&client_id=" . $client_id . "&client_secret=" . $client_secret . "&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+                    $accessToken = $tokenRequest['access_token'];
+                    $tokenExpires = $tokenRequest['expires_in'];
+                    \Db::table('tohur_socialconnect_twitch_apptokens')
+                        ->where('id', 1)
+                        ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
+                }
+            }
+        })->weekly();
     }
 
-    public function boot() {
+    public function boot()
+    {
         // Load socialite
         App::register(\SocialiteProviders\Manager\ServiceProvider::class);
         AliasLoader::getInstance()->alias('Socialite', 'Laravel\Socialite\Facades\Socialite');
 
-        User::extend(function($model) {
+        User::extend(function ($model) {
             $model->hasMany['tohur_socialconnect_providers'] = ['Tohur\SocialConnect\Models\Provider'];
         });
 
-        User::extend(function($model) {
-            $model->addDynamicMethod('addUserGroup', function($group) use ($model) {
+        User::extend(function ($model) {
+            $model->addDynamicMethod('addUserGroup', function ($group) use ($model) {
                 if ($group instanceof \October\Rain\Support\Collection) {
                     return $model->groups()->saveMany($group);
                 }
@@ -132,7 +181,7 @@ class Plugin extends PluginBase {
         });
 
         // Add 'Social Logins' column to users list
-        UsersController::extendListColumns(function($widget, $model) {
+        UsersController::extendListColumns(function ($widget, $model) {
             if (!$model instanceof \RainLab\User\Models\User)
                 return;
 
@@ -147,7 +196,7 @@ class Plugin extends PluginBase {
         });
 
         // Generate Social Login settings form
-        Event::listen('backend.form.extendFields', function(Form $form) {
+        Event::listen('backend.form.extendFields', function (Form $form) {
             if (!$form->getController() instanceof \System\Controllers\Settings)
                 return;
             if (!$form->model instanceof \Tohur\SocialConnect\Models\Settings)
@@ -160,7 +209,7 @@ class Plugin extends PluginBase {
         });
 
         // Add 'Social Providers' field to edit users form
-        Event::listen('backend.form.extendFields', function($widget) {
+        Event::listen('backend.form.extendFields', function ($widget) {
             if (!$widget->getController() instanceof \RainLab\User\Controllers\Users)
                 return;
             if (!$widget->model instanceof \RainLab\User\Models\User)
@@ -177,7 +226,7 @@ class Plugin extends PluginBase {
         });
 
         // Add backend login provider integration
-        Event::listen('backend.auth.extendSigninView', function() {
+        Event::listen('backend.auth.extendSigninView', function () {
             $providers = ProviderManager::instance()->listProviders();
 
             $social_connect_links = [];
@@ -192,7 +241,8 @@ class Plugin extends PluginBase {
         });
     }
 
-    function register_tohur_socialconnect_providers() {
+    function register_tohur_socialconnect_providers()
+    {
         return [
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Facebook' => [
                 'label' => 'Facebook',

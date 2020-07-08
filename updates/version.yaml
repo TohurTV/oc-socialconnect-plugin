@@ -43,3 +43,5 @@
     - Adding Provider User ID for future access
 1.1.7:
     - Refactoring all provider classes
+1.1.8:
+    - Fixed User access token refreshing if they haven't logged in for a bit
