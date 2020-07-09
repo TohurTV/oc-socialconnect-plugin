@@ -115,7 +115,7 @@ class Plugin extends PluginBase
                     }
                 }
             }
-        })->everyFiveMinutes();
+        })->everyMinute();
 
         $schedule->call(function () {
             $twitch = new TwitchAPI();
@@ -149,7 +149,7 @@ class Plugin extends PluginBase
                         ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
                 }
             }
-        })->weekly();
+        })->daily();
     }
 
     public function boot()

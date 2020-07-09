@@ -45,3 +45,5 @@
     - Refactoring all provider classes
 1.1.8:
     - Fixed User access token refreshing if they haven't logged in for a bit
+1.1.9:
+    - Few Fixes
