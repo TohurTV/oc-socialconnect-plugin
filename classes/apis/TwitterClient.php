@@ -8,12 +8,12 @@ use Tohur\Twitter\TwitterAPI;
 class TwitterClient {
 
     /**
-     * @var string Twitch helix API Base URL
+     * @var string Twitter API Base URL
      */
     public $twitterbaseUrl = 'https://api.twitter.com/1.1/';
 
     /**
-     * @var string Twitch helix API Base URL
+     * @var string Twitter API Base URL End
      */
     public $twitterendUrl = '.json';
     public $twitter;
@@ -34,11 +34,9 @@ class TwitterClient {
     }
 
     /**
-     * Get BitsLeaderboard with given Type, Limit and Offset
+     * Get Latest Tweet
      *
-     * @param string $type
-     * @param int $limit
-     * @param int $offset
+     * @param string $name
      * @return string
      */
     public function getLatesttweet($name) {
@@ -50,7 +48,7 @@ class TwitterClient {
 // twitter api endpoint data
         $getfield = '?screen_name='.$name.'&count=1';
 
-// make our api call to twiiter
+// make our api call to twitter
  
         $this->twitter->setGetfield($getfield);
         $this->twitter->buildOauth($url, $requestMethod);
@@ -60,4 +58,29 @@ class TwitterClient {
         return $tweets;
     }
 
+    /**
+     * Post a Tweet with a possible attachment
+     *
+     * @param string $text
+     * @param string $attachment
+     * @return string
+     */
+    public function posttweet($text, $attachment) {
+        $url = $this->twitterbaseUrl.'statuses/update'.$this->twitterendUrl;
+
+// twitter api endpoint request type
+        $requestMethod = 'POST';
+
+// twitter api endpoint data
+        $apiData = array(
+            'status' => $text,
+        );
+
+// make our api call to twitter
+
+        $this->twitter->buildOauth( $url, $requestMethod );
+        $this->twitter->setPostfields( $apiData );
+        $response = $this->twitter->performRequest( true, array( CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_SSL_VERIFYPEER => 0 ) );
+        return $response;
+    }
 }

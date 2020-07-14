@@ -47,3 +47,5 @@
     - Fixed User access token refreshing if they haven't logged in for a bit
 1.1.9:
     - Few Fixes
+1.1.10:
+    - Quite bit of fixes and changes for support of other plugins I work on

@@ -234,6 +234,22 @@ class TwitchAPI
     }
 
     /**
+     * Get Channel Chatters
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function getChatusers($channel)
+    {
+        $url = 'https://tmi.twitch.tv/group/user/'.$channel.'/chatters';
+        $json = file_get_contents($url);
+        $object= json_decode($json,false);
+        return $object;
+    }
+
+    /**
      * Returns True of False whether the Channel is online or not
      *
      * @param string $channel Name of the Twitch Channel
