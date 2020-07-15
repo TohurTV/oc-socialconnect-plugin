@@ -4,8 +4,7 @@ namespace Tohur\SocialConnect\Classes\Apis;
 
 use October\Rain\Exception\ApplicationException;
 
-class TwitchAPI
-{
+class TwitchAPI {
 
     /**
      * @var string Twitch Authencation Base URL
@@ -38,8 +37,7 @@ class TwitchAPI
      * @param string $url
      * @return string
      */
-    function helixTokenRequest($url)
-    {
+    function helixTokenRequest($url) {
         $ch = curl_init($url);
 
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -56,8 +54,7 @@ class TwitchAPI
      * @param string $url
      * @return string
      */
-    function helixApi($url, $acessToken = null)
-    {
+    function helixApi($url, $acessToken = null) {
         $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
         if (!strlen($twitchAPISettings['Twitch']['client_id']))
             throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
@@ -97,16 +94,58 @@ class TwitchAPI
     }
 
     /**
+     * Do Helix API setup with given url
+     *
+     * @param string $url
+     * @return string
+     */
+    function helixApiPost($url, $data, $acessToken = null) {
+        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+        if (!strlen($twitchAPISettings['Twitch']['client_id']))
+            throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+        $client_id = $twitchAPISettings['Twitch']['client_id'];
+        $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+        $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
+        if ($count == 0) {
+            $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+            $accessToken = $tokenRequest['access_token'];
+            $tokenExpires = $tokenRequest['expires_in'];
+            \Db::table('tohur_socialconnect_twitch_apptokens')->insert([
+                ['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'created_at' => now()]
+            ]);
+            $token = $accessToken;
+        } elseif ($acessToken != null) {
+            $token = $acessToken;
+        } else {
+            $getToken = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+            $token = $getToken[0]->access_token;
+        }
+        $Postdata = $data;
+        $ch = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $Postdata);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Client-ID: ' . $client_id,
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json'
+        ));
+
+        return curl_close($ch);
+    }
+
+    /**
      * Do kraken API Request with given url
      *
      * @param string $url
      * @return string
      */
-    public function oldapiRequest($url)
-    {
+    public function oldapiRequest($url) {
         $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
         $client_id = $twitchAPISettings['Twitch']['client_id'];
-        return file_get_contents($this->krakenbaseUrl . $url . "&client_id=" . $client_id . "&api_version=5");
+        return file_get_contents($this->krakenbaseUrl . $url . "?client_id=" . $client_id . "&api_version=5");
     }
 
     /**
@@ -117,8 +156,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getVideoList($channel, $limit = 10, $offset = 0, $broadcastType = 'archive')
-    {
+    public function getVideoList($channel, $limit = 10, $offset = 0, $broadcastType = 'archive') {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/videos?user_id=" . $channelID . "&first=" . $limit . "&type=" . $broadcastType), true);
@@ -133,8 +171,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getClipList($channel, $limit = 10, $offset = 0, $period = 'all')
-    {
+    public function getClipList($channel, $limit = 10, $offset = 0, $period = 'all') {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/clips?broadcaster_id=" . $channelID . "&first=" . $limit), true);
@@ -149,8 +186,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getBitsLeaderboard($acessToken = null, $limit = 10, $period = 'all')
-    {
+    public function getBitsLeaderboard($acessToken = null, $limit = 10, $period = 'all') {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/bits/leaderboard?count=" . $limit, $acessToken), true);
         return $object['data'];
     }
@@ -163,14 +199,47 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getChannelinfo($channel)
-    {
+    public function getChannelinfo($channel) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID), true);
         return $object['data'];
     }
 
+    /**
+     * Update Current Channel info
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function updateChannelinfo($channel, $game, $title) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $gamelookup = $this->getGame($game);
+        $gameID = $gamelookup[0]['id'];
+        $data = '{"game_id":"'.$gameID.'", "title":"'.$title.'", "broadcaster_language":"en"}';
+        $post = $this->helixApiPost($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID, $data);
+        return $post;
+    }
+    
+     /**
+     * Set Current Channel tags
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function updateChanneltags($channel, $tags) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $data = '{"tag_ids": ["621fb5bf-5498-4d8f-b4ac-db4d40d401bf","79977fb9-f106-4a87-a386-f1b0f99783dd"]}';
+        $post = $this->helixApiPost($this->helixbaseUrl . "/streams/tags?broadcaster_id=" . $channelID, $data);
+        return $post;
+    }
+    
     /**
      * Get User
      *
@@ -179,10 +248,39 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getUser($channel)
-    {
+    public function getUser($channel) {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users?login=" . $channel), true);
         return $object['data'];
+    }
+
+     /**
+     * Get Game
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function getGame($game) {
+        $object = json_decode($this->helixApi($this->helixbaseUrl . "/games?name=" . $game), true);
+        return $object['data'];
+    }
+    
+    /**
+     * Get Cliplist with given Type, Limit and Offset
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function getSubcount($channel) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+
+        $object = json_decode($this->krakenApi($this->krakenbaseUrl . "/channels/'.$channelID.'/subscriptions"), true);
+        return $object['_total'];
     }
 
     /**
@@ -193,8 +291,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getFollowcount($channel)
-    {
+    public function getFollowcount($channel) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID), true);
@@ -209,8 +306,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getLatestfollower($channel)
-    {
+    public function getLatestfollower($channel) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID), true);
@@ -225,8 +321,7 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getStream($channel)
-    {
+    public function getStream($channel) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/streams?user_id=" . $channelID), true);
@@ -241,12 +336,40 @@ class TwitchAPI
      * @param int $offset
      * @return string
      */
-    public function getChatusers($channel)
-    {
-        $url = 'https://tmi.twitch.tv/group/user/'.$channel.'/chatters';
+    public function getChatusers($channel) {
+        $url = 'https://tmi.twitch.tv/group/user/' . $channel . '/chatters';
         $json = file_get_contents($url);
-        $object= json_decode($json,false);
+        $object = json_decode($json, false);
         return $object;
+    }
+
+    /**
+     * Get Channel Chatters
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function getHosts($channel) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $url = 'https://tmi.twitch.tv/hosts?include_logins=1&target=' . $channelID;
+        $json = file_get_contents($url);
+        $object = json_decode($json, true);
+        return $object['hosts'];
+    }
+
+    /**
+     * Returns the amount of channels that is currently hosting a channel (or an error message).
+     *
+     * @param  Request $request
+     * @param  string  $channel
+     * @return Response
+     */
+    public function hostscount($channel) {
+        $hosts = $this->getHosts($channel);
+        return count($hosts);
     }
 
     /**
@@ -255,8 +378,7 @@ class TwitchAPI
      * @param string $channel Name of the Twitch Channel
      * @return bool
      */
-    public function isChannelLive($channel)
-    {
+    public function isChannelLive($channel) {
         $apiCall = $this->getStream($channel);
         if ($apiCall == null) {
             return false;
