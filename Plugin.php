@@ -15,6 +15,7 @@ use RainLab\User\Controllers\Users as UsersController;
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\Classes\Apis\TwitchAPI;
 use Tohur\SocialConnect\Classes\ProviderManager;
+use October\Rain\Exception\ApplicationException;
 
 /**
  * SocialConnect Plugin Information File

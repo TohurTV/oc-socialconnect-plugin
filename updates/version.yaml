@@ -49,3 +49,5 @@
     - Few Fixes
 1.1.10:
     - Quite bit of fixes and changes for support of other plugins I work on
+1.1.11:
+    - Quick fix for https://github.com/TohurTV/oc-socialconnect-plugin/issues/7
