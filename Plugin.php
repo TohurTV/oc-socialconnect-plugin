@@ -15,7 +15,6 @@ use RainLab\User\Controllers\Users as UsersController;
 use Backend\Widgets\Form;
 use Tohur\SocialConnect\Classes\Apis\TwitchAPI;
 use Tohur\SocialConnect\Classes\ProviderManager;
-use October\Rain\Exception\ApplicationException;
 
 /**
  * SocialConnect Plugin Information File
@@ -82,13 +81,13 @@ class Plugin extends PluginBase
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                 echo 'Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.';
             $client_id = $twitchAPISettings['Twitch']['client_id'];
             $client_secret = $twitchAPISettings['Twitch']['client_secret'];
 
             $count = \DB::table('tohur_socialconnect_providers')->count();
             if ($count == 0) {
-                throw new ApplicationException('There are no twitch apptokens.');
+                echo 'There are no twitch apptokens.';
             } else {
                 $Tokens = \DB::table('tohur_socialconnect_providers')->get();
                 foreach ($Tokens as $Token) {
@@ -122,13 +121,13 @@ class Plugin extends PluginBase
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                 echo 'Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.';
             $client_id = $twitchAPISettings['Twitch']['client_id'];
             $client_secret = $twitchAPISettings['Twitch']['client_secret'];
 
             $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
             if ($count == 0) {
-                throw new ApplicationException('There are no twitch apptokens.');
+                echo 'There are no twitch apptokens.';
             } else {
                 $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
                 $expiresIn = $tokens[0]->expires_in;
