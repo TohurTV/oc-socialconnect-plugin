@@ -23,8 +23,7 @@ use Tohur\SocialConnect\Classes\ProviderManager;
  * https://cartalyst.com/manual/sentry-social
  *
  */
-class Plugin extends PluginBase
-{
+class Plugin extends PluginBase {
 
     // Make this plugin run on updates page
     public $elevated = true;
@@ -35,8 +34,7 @@ class Plugin extends PluginBase
      *
      * @return array
      */
-    public function pluginDetails()
-    {
+    public function pluginDetails() {
         return [
             'name' => 'Social Connect',
             'description' => 'Allows visitors to register/sign in with their social media accounts',
@@ -45,8 +43,7 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function registerSettings()
-    {
+    public function registerSettings() {
         return [
             'settings' => [
                 'label' => 'Social Connect',
@@ -60,8 +57,7 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function registerComponents()
-    {
+    public function registerComponents() {
         return [
             'Tohur\SocialConnect\Components\SocialConnect' => 'socialconnect',
         ];
@@ -71,47 +67,48 @@ class Plugin extends PluginBase
      * Register method, called when the plugin is first registered.
      * @return void
      */
-    public function register()
-    {
+    public function register() {
+        
     }
 
-    public function registerSchedule($schedule)
-    {
+    public function registerSchedule($schedule) {
         $schedule->call(function () {
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-            if (!strlen($twitchAPISettings['Twitch']['client_id']))
-                 echo 'Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.';
-            $client_id = $twitchAPISettings['Twitch']['client_id'];
-            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
-
-            $count = \DB::table('tohur_socialconnect_providers')->count();
-            if ($count == 0) {
-                echo 'There are no twitch apptokens.';
+            if (!strlen($twitchAPISettings['Twitch']['client_id'])) {
+                
             } else {
-                $Tokens = \DB::table('tohur_socialconnect_providers')->get();
-                foreach ($Tokens as $Token) {
-                    if ($Token->provider_id == 'Twitch') {
-                        $expiresIn = $Token->provider_expiresIn;
-                        $current = Carbon::now();
-                        if ($Token->updated_at == null) {
-                            $time = $Token->created_at;
+                $client_id = $twitchAPISettings['Twitch']['client_id'];
+                $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+
+                $count = \DB::table('tohur_socialconnect_providers')->count();
+                if ($count == 0) {
+
+                } else {
+                    $Tokens = \DB::table('tohur_socialconnect_providers')->get();
+                    foreach ($Tokens as $Token) {
+                        if ($Token->provider_id == 'Twitch') {
+                            $expiresIn = $Token->provider_expiresIn;
+                            $current = Carbon::now();
+                            if ($Token->updated_at == null) {
+                                $time = $Token->created_at;
+                            } else {
+                                $time = $Token->updated_at;
+                            }
+                            $expired = Carbon::parse($time)->addSeconds($expiresIn);
+
+                            if ($current > $expired) {
+                                $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=refresh_token&refresh_token=" . $Token->provider_refreshToken . "&client_id=" . $client_id . "&client_secret=" . $client_secret . ""), true);
+                                $accessToken = $tokenRequest['access_token'];
+                                $refreshToken = $tokenRequest['refresh_token'];
+                                $tokenExpires = $expiresIn;
+                                \Db::table('tohur_socialconnect_providers')
+                                        ->where('provider_id', '=', 'Twitch')
+                                        ->update(['provider_token' => $accessToken, 'provider_refreshToken' => $refreshToken, 'provider_expiresIn' => $tokenExpires, 'updated_at' => now()]);
+                            }
                         } else {
-                            $time = $Token->updated_at;
+                            
                         }
-                        $expired = Carbon::parse($time)->addSeconds($expiresIn);
-
-                        if ($current > $expired) {
-                            $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=refresh_token&refresh_token=" . $Token->provider_refreshToken . "&client_id=" . $client_id . "&client_secret=" . $client_secret . ""), true);
-                            $accessToken = $tokenRequest['access_token'];
-                            $refreshToken = $tokenRequest['refresh_token'];
-                            $tokenExpires = $expiresIn;
-                            \Db::table('tohur_socialconnect_providers')
-                                ->where('provider_id', '=', 'Twitch')
-                                ->update(['provider_token' => $accessToken, 'provider_refreshToken' => $refreshToken, 'provider_expiresIn' => $tokenExpires, 'updated_at' => now()]);
-                        }
-                    } else {
-
                     }
                 }
             }
@@ -120,40 +117,41 @@ class Plugin extends PluginBase
         $schedule->call(function () {
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-            if (!strlen($twitchAPISettings['Twitch']['client_id']))
-                 echo 'Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.';
-            $client_id = $twitchAPISettings['Twitch']['client_id'];
-            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
-
-            $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
-            if ($count == 0) {
-                echo 'There are no twitch apptokens.';
+            if (!strlen($twitchAPISettings['Twitch']['client_id'])) {
+               
             } else {
-                $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
-                $expiresIn = $tokens[0]->expires_in;
-                $current = Carbon::now();
-                if ($tokens[0]->updated_at == null) {
-                    $time = $tokens[0]->created_at;
-                } else {
-                    $time = $tokens[0]->updated_at;
-                }
-                $expired = Carbon::parse($time)->addSeconds($expiresIn);
+                $client_id = $twitchAPISettings['Twitch']['client_id'];
+                $client_secret = $twitchAPISettings['Twitch']['client_secret'];
 
-                if ($current > $expired) {
-                    $revokeRequest = json_decode($twitch->helixTokenRequest($twitch->oRevokebaseUrl . "?client_id=" . $client_id . "&token=" . $tokens[0]->access_token . ""), true);
-                    $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=client_credentials&client_id=" . $client_id . "&client_secret=" . $client_secret . "&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
-                    $accessToken = $tokenRequest['access_token'];
-                    $tokenExpires = $tokenRequest['expires_in'];
-                    \Db::table('tohur_socialconnect_twitch_apptokens')
-                        ->where('id', 1)
-                        ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
+                $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
+                if ($count == 0) {
+                    
+                } else {
+                    $tokens = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+                    $expiresIn = $tokens[0]->expires_in;
+                    $current = Carbon::now();
+                    if ($tokens[0]->updated_at == null) {
+                        $time = $tokens[0]->created_at;
+                    } else {
+                        $time = $tokens[0]->updated_at;
+                    }
+                    $expired = Carbon::parse($time)->addSeconds($expiresIn);
+
+                    if ($current > $expired) {
+                        $revokeRequest = json_decode($twitch->helixTokenRequest($twitch->oRevokebaseUrl . "?client_id=" . $client_id . "&token=" . $tokens[0]->access_token . ""), true);
+                        $tokenRequest = json_decode($twitch->helixTokenRequest($twitch->oAuthbaseUrl . "?grant_type=client_credentials&client_id=" . $client_id . "&client_secret=" . $client_secret . "&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+                        $accessToken = $tokenRequest['access_token'];
+                        $tokenExpires = $tokenRequest['expires_in'];
+                        \Db::table('tohur_socialconnect_twitch_apptokens')
+                                ->where('id', 1)
+                                ->update(['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'updated_at' => now()]);
+                    }
                 }
             }
         })->daily();
     }
 
-    public function boot()
-    {
+    public function boot() {
         // Load socialite
         App::register(\SocialiteProviders\Manager\ServiceProvider::class);
         AliasLoader::getInstance()->alias('Socialite', 'Laravel\Socialite\Facades\Socialite');
@@ -222,7 +220,7 @@ class Plugin extends PluginBase
                     'label' => 'Social Providers',
                     'type' => 'Tohur\SocialConnect\FormWidgets\LoginProviders',
                 ],
-            ], 'secondary');
+                    ], 'secondary');
         });
 
         // Add backend login provider integration
@@ -241,8 +239,7 @@ class Plugin extends PluginBase
         });
     }
 
-    function register_tohur_socialconnect_providers()
-    {
+    function register_tohur_socialconnect_providers() {
         return [
             '\\Tohur\\SocialConnect\\SocialConnectProviders\\Facebook' => [
                 'label' => 'Facebook',
