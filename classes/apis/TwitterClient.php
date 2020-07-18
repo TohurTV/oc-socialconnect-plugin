@@ -65,7 +65,7 @@ class TwitterClient {
      * @param string $attachment
      * @return string
      */
-    public function posttweet($text, $attachment) {
+    public function posttweet($text) {
         $url = $this->twitterbaseUrl.'statuses/update'.$this->twitterendUrl;
 
 // twitter api endpoint request type
