@@ -47,7 +47,7 @@ class TwitchAPI {
         curl_close($ch);
         return $result;
     }
-    
+
     /**
      * Do Kraken API setup with given url
      *
@@ -56,11 +56,13 @@ class TwitchAPI {
      */
     function krakenApi($url, $acessToken = null, $bot = false) {
         if ($bot != false) {
-            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
-            if (!strlen($botAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-            $client_id = $botAPISettings['Twitch']['client_id'];
-            $client_secret = $botAPISettings['Twitch']['client_secret'];
+            if (\Schema::hasTable('tohur_bot_owners')) {
+                $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+                if (!strlen($botAPISettings['Twitch']['client_id']))
+                    throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                $client_id = $botAPISettings['Twitch']['client_id'];
+                $client_secret = $botAPISettings['Twitch']['client_secret'];
+            }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
@@ -110,11 +112,13 @@ class TwitchAPI {
      */
     function krakenApiPost($url, $data, $acessToken = null, $bot = false) {
         if ($bot != false) {
+            if (\Schema::hasTable('tohur_bot_owners')) {
             $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
             if (!strlen($botAPISettings['Twitch']['client_id']))
                 throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
             $client_id = $botAPISettings['Twitch']['client_id'];
             $client_secret = $botAPISettings['Twitch']['client_secret'];
+            }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
@@ -153,7 +157,7 @@ class TwitchAPI {
 
         return curl_close($ch);
     }
-    
+
     /**
      * Do Helix API setup with given url
      *
@@ -162,11 +166,13 @@ class TwitchAPI {
      */
     function helixApi($url, $acessToken = null, $bot = false) {
         if ($bot != false) {
+            if (\Schema::hasTable('tohur_bot_owners')) {
             $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
             if (!strlen($botAPISettings['Twitch']['client_id']))
                 throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
             $client_id = $botAPISettings['Twitch']['client_id'];
             $client_secret = $botAPISettings['Twitch']['client_secret'];
+            }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
@@ -215,11 +221,13 @@ class TwitchAPI {
      */
     function helixApiPost($url, $data, $acessToken = null, $bot = false) {
         if ($bot != false) {
+            if (\Schema::hasTable('tohur_bot_owners')) {
             $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
             if (!strlen($botAPISettings['Twitch']['client_id']))
                 throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
             $client_id = $botAPISettings['Twitch']['client_id'];
             $client_secret = $botAPISettings['Twitch']['client_secret'];
+            }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id']))
