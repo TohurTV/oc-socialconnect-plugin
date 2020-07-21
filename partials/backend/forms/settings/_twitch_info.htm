@@ -5,7 +5,13 @@
     </div>
     <div class="content">
         <ol>
-            <li><b>Valid OAuth redirect URIs</b> to <span style="color:green"><?= URL::route('tohur_socialconnect_provider_callback', ['Twitch']) ?></span></li>
+            <li>Go to <a target="_blanck" href="https://dev.twitch.tv/console/apps/">https://dev.twitch.tv/console/apps/</a> and create a new app.</li>
+            <li>Set Name to your sites name</li>
+            <li>Set <b>OAuth Redirect URL</b> to <span style="color:green"><?= URL::route('tohur_socialconnect_provider_callback', ['Twitch']) ?></span></li>
+            <li>Click <b>Create</b>.</li>
+            <li>Generate your <b>Client Secret</b> and then copy your <b>Client Id</b> and <b>Client Secret</b></li>
+            <li>Paste your <b>Client Id</b> and <b>Client Secret</b> below and paste <span style="color:green"><?= URL::route('tohur_socialconnect_provider_callback', ['Twitch']) ?></span> as your redirect</li> 
+            
         </ol>
     </div>
 </div>

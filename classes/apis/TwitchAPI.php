@@ -47,6 +47,60 @@ class TwitchAPI {
         curl_close($ch);
         return $result;
     }
+    
+    /**
+     * Do Kraken API setup with given url
+     *
+     * @param string $url
+     * @return string
+     */
+    function krakenApi($url, $acessToken = null, $bot = false) {
+        if ($bot != false) {
+            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+            if (!strlen($botAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $botAPISettings['Twitch']['client_id'];
+            $client_secret = $botAPISettings['Twitch']['client_secret'];
+        } else {
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+        }
+        $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
+        if ($count == 0) {
+            $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+            $accessToken = $tokenRequest['access_token'];
+            $tokenExpires = $tokenRequest['expires_in'];
+            \Db::table('tohur_socialconnect_twitch_apptokens')->insert([
+                ['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'created_at' => now()]
+            ]);
+            $token = $accessToken;
+        } elseif ($acessToken != null) {
+            $token = $acessToken;
+        } else {
+            $getToken = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+            $token = $getToken[0]->access_token;
+        }
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Accept: application/vnd.twitchtv.v5+json',
+            'Client-ID: ' . $client_id,
+            'Authorization: OAuth ' . $token
+        ));
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
 
     /**
      * Do Helix API setup with given url
@@ -54,12 +108,72 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixApi($url, $acessToken = null) {
-        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-        if (!strlen($twitchAPISettings['Twitch']['client_id']))
-            throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-        $client_id = $twitchAPISettings['Twitch']['client_id'];
-        $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+    function krakenApiPost($url, $data, $acessToken = null, $bot = false) {
+        if ($bot != false) {
+            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+            if (!strlen($botAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $botAPISettings['Twitch']['client_id'];
+            $client_secret = $botAPISettings['Twitch']['client_secret'];
+        } else {
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+        }
+        $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
+        if ($count == 0) {
+            $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
+            $accessToken = $tokenRequest['access_token'];
+            $tokenExpires = $tokenRequest['expires_in'];
+            \Db::table('tohur_socialconnect_twitch_apptokens')->insert([
+                ['access_token' => $accessToken, 'expires_in' => $tokenExpires, 'created_at' => now()]
+            ]);
+            $token = $accessToken;
+        } elseif ($acessToken != null) {
+            $token = $acessToken;
+        } else {
+            $getToken = \DB::select('select * from tohur_socialconnect_twitch_apptokens where id = ?', array(1));
+            $token = $getToken[0]->access_token;
+        }
+        $Postdata = $data;
+        $ch = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $Postdata);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Accept: application/vnd.twitchtv.v5+json',
+            'Client-ID: ' . $client_id,
+            'Authorization: OAuth ' . $token,
+            'Content-Type: application/json'
+        ));
+
+        return curl_close($ch);
+    }
+    
+    /**
+     * Do Helix API setup with given url
+     *
+     * @param string $url
+     * @return string
+     */
+    function helixApi($url, $acessToken = null, $bot = false) {
+        if ($bot != false) {
+            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+            if (!strlen($botAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $botAPISettings['Twitch']['client_id'];
+            $client_secret = $botAPISettings['Twitch']['client_secret'];
+        } else {
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+        }
         $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
         if ($count == 0) {
             $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
@@ -99,12 +213,20 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixApiPost($url, $data, $acessToken = null) {
-        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-        if (!strlen($twitchAPISettings['Twitch']['client_id']))
-            throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-        $client_id = $twitchAPISettings['Twitch']['client_id'];
-        $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+    function helixApiPost($url, $data, $acessToken = null, $bot = false) {
+        if ($bot != false) {
+            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+            if (!strlen($botAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $botAPISettings['Twitch']['client_id'];
+            $client_secret = $botAPISettings['Twitch']['client_secret'];
+        } else {
+            $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+            if (!strlen($twitchAPISettings['Twitch']['client_id']))
+                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+            $client_id = $twitchAPISettings['Twitch']['client_id'];
+            $client_secret = $twitchAPISettings['Twitch']['client_secret'];
+        }
         $count = \DB::table('tohur_socialconnect_twitch_apptokens')->count();
         if ($count == 0) {
             $tokenRequest = json_decode($this->helixTokenRequest($this->oAuthbaseUrl . "?client_id=" . $client_id . "&client_secret=" . $client_secret . "&grant_type=client_credentials&scope=channel:read:hype_train%20channel:read:subscriptions%20bits:read%20user:read:broadcast%20user:read:email"), true);
@@ -219,12 +341,12 @@ class TwitchAPI {
         $channelID = $user[0]['id'];
         $gamelookup = $this->getGame($game);
         $gameID = $gamelookup[0]['id'];
-        $data = '{"game_id":"'.$gameID.'", "title":"'.$title.'", "broadcaster_language":"en"}';
+        $data = '{"game_id":"' . $gameID . '", "title":"' . $title . '", "broadcaster_language":"en"}';
         $post = $this->helixApiPost($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID, $data);
         return $post;
     }
-    
-     /**
+
+    /**
      * Set Current Channel tags
      *
      * @param string $type
@@ -239,7 +361,7 @@ class TwitchAPI {
         $post = $this->helixApiPost($this->helixbaseUrl . "/streams/tags?broadcaster_id=" . $channelID, $data);
         return $post;
     }
-    
+
     /**
      * Get User
      *
@@ -253,7 +375,7 @@ class TwitchAPI {
         return $object['data'];
     }
 
-     /**
+    /**
      * Get Game
      *
      * @param string $type
@@ -265,7 +387,7 @@ class TwitchAPI {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/games?name=" . $game), true);
         return $object['data'];
     }
-    
+
     /**
      * Get Cliplist with given Type, Limit and Offset
      *
@@ -311,6 +433,22 @@ class TwitchAPI {
         $channelID = $user[0]['id'];
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID), true);
         return $object['data'][0]['from_name'];
+    }
+
+    /**
+     * Returns the follow relationship between a channel ($toId) and user ($fromId).
+     *
+     * @param string $toId User ID of the channel
+     * @param string $fromId User ID of the user.
+     * @return string
+     */
+    public function getFollowRelationship($channel, $targetUser) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $follower = $this->getUser($targetUser);
+        $followerID = $follower[0]['id'];
+        $object = json_decode($this->helixApi($this->helixbaseUrl . "/users/follows?to_id=" . $channelID . "&from_id=" . $followerID), true);
+        return $object['data'];
     }
 
     /**
