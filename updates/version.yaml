@@ -55,3 +55,5 @@
     - Proper fix for https://github.com/TohurTV/oc-socialconnect-plugin/issues/7
 1.1.13:
     - more changes concerning https://github.com/TohurTV/oc-socialconnect-plugin/issues/7
+1.1.14:
+    - Updates to twitch API class for incoming Bot plugin in Dev and updated instructions for Twitch
