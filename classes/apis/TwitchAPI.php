@@ -54,8 +54,8 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function krakenApi($url, $acessToken = null, $bot = false) {
-        if ($bot != false) {
+    function krakenApi($url, $acessToken = null, $bot = null) {
+        if ($bot != null) {
             if (\Schema::hasTable('tohur_bot_owners')) {
                 $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
                 if (!strlen($botAPISettings['Twitch']['client_id']))
@@ -86,13 +86,10 @@ class TwitchAPI {
             $token = $getToken[0]->access_token;
         }
 
-        $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Accept: application/vnd.twitchtv.v5+json',
             'Client-ID: ' . $client_id,
@@ -110,14 +107,14 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function krakenApiPost($url, $data, $acessToken = null, $bot = false) {
-        if ($bot != false) {
+    function krakenApiPost($url, $data, $acessToken = null, $bot = null) {
+        if ($bot != null) {
             if (\Schema::hasTable('tohur_bot_owners')) {
-            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
-            if (!strlen($botAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-            $client_id = $botAPISettings['Twitch']['client_id'];
-            $client_secret = $botAPISettings['Twitch']['client_secret'];
+                $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+                if (!strlen($botAPISettings['Twitch']['client_id']))
+                    throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                $client_id = $botAPISettings['Twitch']['client_id'];
+                $client_secret = $botAPISettings['Twitch']['client_secret'];
             }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
@@ -164,14 +161,14 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixApi($url, $acessToken = null, $bot = false) {
-        if ($bot != false) {
+    function helixApi($url, $acessToken = null, $bot = null) {
+        if ($bot != null) {
             if (\Schema::hasTable('tohur_bot_owners')) {
-            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
-            if (!strlen($botAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-            $client_id = $botAPISettings['Twitch']['client_id'];
-            $client_secret = $botAPISettings['Twitch']['client_secret'];
+                $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+                if (!strlen($botAPISettings['Twitch']['client_id']))
+                    throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                $client_id = $botAPISettings['Twitch']['client_id'];
+                $client_secret = $botAPISettings['Twitch']['client_secret'];
             }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
@@ -219,14 +216,14 @@ class TwitchAPI {
      * @param string $url
      * @return string
      */
-    function helixApiPost($url, $data, $acessToken = null, $bot = false) {
-        if ($bot != false) {
+    function helixApiPost($url, $data, $acessToken = null, $bot = null) {
+        if ($bot != null) {
             if (\Schema::hasTable('tohur_bot_owners')) {
-            $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
-            if (!strlen($botAPISettings['Twitch']['client_id']))
-                throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
-            $client_id = $botAPISettings['Twitch']['client_id'];
-            $client_secret = $botAPISettings['Twitch']['client_secret'];
+                $botAPISettings = \Tohur\Bot\Models\Settings::instance()->get('bot', []);
+                if (!strlen($botAPISettings['Twitch']['client_id']))
+                    throw new ApplicationException('Twitch API access is not configured. Please configure it on the Social Connect Settings Twitch tab.');
+                $client_id = $botAPISettings['Twitch']['client_id'];
+                $client_secret = $botAPISettings['Twitch']['client_secret'];
             }
         } else {
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
@@ -267,18 +264,6 @@ class TwitchAPI {
     }
 
     /**
-     * Do kraken API Request with given url
-     *
-     * @param string $url
-     * @return string
-     */
-    public function oldapiRequest($url) {
-        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-        $client_id = $twitchAPISettings['Twitch']['client_id'];
-        return file_get_contents($this->krakenbaseUrl . $url . "?client_id=" . $client_id . "&api_version=5");
-    }
-
-    /**
      * Get Videolist with given Type, Limit and Offset
      *
      * @param string $type
@@ -316,7 +301,7 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getBitsLeaderboard($acessToken = null, $limit = 10, $period = 'all') {
+    public function getBitsLeaderboard($acessToken = null, $bot = null, $limit = 10, $period = 'all') {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/bits/leaderboard?count=" . $limit, $acessToken), true);
         return $object['data'];
     }
@@ -404,12 +389,10 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function getSubcount($channel) {
+    public function getSubcount($channel, $acessToken = null, $bot = null) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
-        $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-
-        $object = json_decode($this->krakenApi($this->krakenbaseUrl . "/channels/'.$channelID.'/subscriptions"), true);
+        $object = json_decode($this->krakenApi($this->krakenbaseUrl . "/channels/{$channelID}/subscriptions", $acessToken, $bot), true);
         return $object['_total'];
     }
 
