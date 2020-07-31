@@ -329,13 +329,13 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function updateChannelinfo($channel, $game, $title) {
+    public function updateChannelinfo($channel, $game, $title, $acessToken = null, $bot = null) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $gamelookup = $this->getGame($game);
         $gameID = $gamelookup[0]['id'];
         $data = '{"game_id":"' . $gameID . '", "title":"' . $title . '", "broadcaster_language":"en"}';
-        $post = $this->helixApiPost($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID, $data);
+        $post = $this->helixApiPost($this->helixbaseUrl . "/channels?broadcaster_id=" . $channelID, $data, $acessToken, $bot);
         return $post;
     }
 
@@ -347,11 +347,11 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function updateChanneltags($channel, $tags) {
+    public function updateChanneltags($channel, $tags, $acessToken = null, $bot = null) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $data = '{"tag_ids": ["621fb5bf-5498-4d8f-b4ac-db4d40d401bf","79977fb9-f106-4a87-a386-f1b0f99783dd"]}';
-        $post = $this->helixApiPost($this->helixbaseUrl . "/streams/tags?broadcaster_id=" . $channelID, $data);
+        $post = $this->helixApiPost($this->helixbaseUrl . "/streams/tags?broadcaster_id=" . $channelID, $data, $acessToken, $bot);
         return $post;
     }
 
@@ -366,6 +366,19 @@ class TwitchAPI {
     public function getUser($channel) {
         $object = json_decode($this->helixApi($this->helixbaseUrl . "/users?login=" . $channel), true);
         return $object['data'];
+    }
+
+    /**
+     * Kraken Get User
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
+    public function krakengetUser($channel) {
+        $object = json_decode($this->krakenApi($this->krakenbaseUrl . "/users/".$channel), true);
+        return $object;
     }
 
     /**
