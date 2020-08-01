@@ -59,3 +59,5 @@
     - Updates to twitch API class for incoming Bot plugin in Dev and updated instructions for Twitch
 1.1.15:
     - More Updates to twitch API class for incoming Bot plugin in Dev
+1.1.16:
+    - Twitch API Fixes and adding IGDB (Internet Games Database) for Bot plugin in Dev and  for use in other plugins

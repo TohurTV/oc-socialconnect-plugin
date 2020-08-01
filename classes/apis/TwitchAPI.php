@@ -141,18 +141,19 @@ class TwitchAPI {
         $Postdata = $data;
         $ch = curl_init();
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $Postdata);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $Postdata);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Accept: application/vnd.twitchtv.v5+json',
             'Client-ID: ' . $client_id,
             'Authorization: OAuth ' . $token,
             'Content-Type: application/json'
         ));
-
-        return curl_close($ch);
+        curl_exec ($ch);
+        curl_close($ch);
     }
 
     /**
@@ -250,17 +251,18 @@ class TwitchAPI {
         $Postdata = $data;
         $ch = curl_init();
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $Postdata);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $Postdata);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Client-ID: ' . $client_id,
             'Authorization: Bearer ' . $token,
             'Content-Type: application/json'
         ));
-
-        return curl_close($ch);
+        curl_exec ($ch);
+        curl_close($ch);
     }
 
     /**
@@ -329,7 +331,7 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
-    public function updateChannelinfo($channel, $game, $title, $acessToken = null, $bot = null) {
+    public function updateChannelinfo($channel, $title, $game, $acessToken = null, $bot = null) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];
         $gamelookup = $this->getGame($game);
@@ -390,7 +392,8 @@ class TwitchAPI {
      * @return string
      */
     public function getGame($game) {
-        $object = json_decode($this->helixApi($this->helixbaseUrl . "/games?name=" . $game), true);
+        $formated = urlencode($game);
+        $object = json_decode($this->helixApi($this->helixbaseUrl . "/games?name=" . $formated), true);
         return $object['data'];
     }
 
