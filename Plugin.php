@@ -48,9 +48,18 @@ class Plugin extends PluginBase {
             'settings' => [
                 'label' => 'Social Connect',
                 'description' => 'Manage Social Login providers.',
-                'category' => SettingsManager::CATEGORY_USERS,
+                'category' => 'Tohur',
                 'icon' => 'icon-users',
                 'class' => 'Tohur\SocialConnect\Models\Settings',
+                'order' => 600,
+                'permissions' => ['rainlab.users.access_settings'],
+            ],
+            [
+                'label' => 'Api Settings',
+                'description' => 'Manage Third Party Api settings.',
+                'category' => 'Tohur',
+                'icon' => 'icon-cogs',
+                'class' => 'Tohur\SocialConnect\Models\Apisettings',
                 'order' => 600,
                 'permissions' => ['rainlab.users.access_settings'],
             ]
@@ -83,7 +92,7 @@ class Plugin extends PluginBase {
 
                 $count = \DB::table('tohur_socialconnect_providers')->count();
                 if ($count == 0) {
-
+                    
                 } else {
                     $Tokens = \DB::table('tohur_socialconnect_providers')->get();
                     foreach ($Tokens as $Token) {
@@ -118,7 +127,7 @@ class Plugin extends PluginBase {
             $twitch = new TwitchAPI();
             $twitchAPISettings = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
             if (!strlen($twitchAPISettings['Twitch']['client_id'])) {
-               
+                
             } else {
                 $client_id = $twitchAPISettings['Twitch']['client_id'];
                 $client_secret = $twitchAPISettings['Twitch']['client_secret'];

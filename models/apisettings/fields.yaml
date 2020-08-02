@@ -1,0 +1,16 @@
+# ===================================
+#  Field Definitions
+# ===================================
+tabs:
+  fields:
+      
+    api[Streamelements][streamelementskey]:
+      label: StreamElements JWT token
+      type: textarea
+      size: tiny
+      tab: Main
+
+    api[IGDB][igdbkey]:
+      label: IGDB API Key
+      type: text
+      tab: Main
