@@ -405,6 +405,23 @@ class TwitchAPI {
      * @param int $offset
      * @return string
      */
+    public function getSubstatus($channel, $targetUser, $acessToken = null, $bot = null) {
+        $user = $this->getUser($channel);
+        $channelID = $user[0]['id'];
+        $subcriber = $this->getUser($targetUser);
+        $subcriberID = $subcriber[0]['id'];
+        $object = json_decode($this->helixApi($this->helixbaseUrl . "/subscriptions?broadcaster_id={$channelID}&user_id={$subcriberID}", $acessToken, $bot), true);
+        return $object['data'];
+    }
+    
+    /**
+     * Get Cliplist with given Type, Limit and Offset
+     *
+     * @param string $type
+     * @param int $limit
+     * @param int $offset
+     * @return string
+     */
     public function getSubcount($channel, $acessToken = null, $bot = null) {
         $user = $this->getUser($channel);
         $channelID = $user[0]['id'];

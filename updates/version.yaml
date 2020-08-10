@@ -63,3 +63,5 @@
     - Twitch API Fixes and adding IGDB (Internet Games Database) for Bot plugin in Dev and  for use in other plugins
 1.1.17:
     - New Twitter class added to implement Posting images via twitter. Reworking of settings into new location under new Tohur cat
+1.1.18:
+    - More updates to TwitchAPI class
