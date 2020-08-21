@@ -65,3 +65,5 @@
     - New Twitter class added to implement Posting images via twitter. Reworking of settings into new location under new Tohur cat
 1.1.18:
     - More updates to TwitchAPI class
+1.1.19:
+    - Changing Twitter Provider to new  provider

@@ -11,6 +11,7 @@
     ],
     "require": {
         "laravel/socialite": "3.4.*",
+        "socialiteproviders/twitter": "3.0.*",
         "socialiteproviders/discord": "2.0.*",
         "socialiteproviders/twitch": "5.2.*",
         "socialiteproviders/microsoft-graph": "3.1.*",
