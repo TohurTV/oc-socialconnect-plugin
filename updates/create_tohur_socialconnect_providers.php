@@ -12,11 +12,11 @@ class CreateTohurSocialConnectProvidersTable extends Migration {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index()->nullable();
-            $table->string('provider_id')->default('');
-            $table->string('provider_userid')->default('');
-            $table->string('provider_token')->default('');
-            $table->string('provider_refreshToken')->default('');
-            $table->string('provider_expiresIn')->default('');
+            $table->string('provider_id')->nullable();
+            $table->string('provider_userid')->nullable();
+            $table->string('provider_token')->nullable();
+            $table->string('provider_refreshToken')->nullable();
+            $table->string('provider_expiresIn')->nullable();
             $table->timestamps();
             $table->index(['provider_id', 'provider_token'], 'provider_id_token_index');
         });

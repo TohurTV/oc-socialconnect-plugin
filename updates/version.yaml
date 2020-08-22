@@ -67,3 +67,5 @@
     - More updates to TwitchAPI class
 1.1.19:
     - Changing Twitter Provider to new  provider
+1.1.20:
+    - Database fix
