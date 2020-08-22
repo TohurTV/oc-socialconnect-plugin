@@ -23,17 +23,17 @@ class Twitter extends SocialConnectProviderBase {
 
         // Socialite uses config files for credentials but we want to pass from
         // our settings page - so override the login method for this provider
-        Socialite::extend($this->driver, function($app) {
-            $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
-            $providers['Twitter']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Twitter'], true);
-
-            return new TwitterProviderExt(
-                    app()->request, new TwitterServer($providers['Twitter'])
-            );
-            return Socialite::buildProvider(
-                            TwitterProviderExt::class, (array) @$providers['Twitter']
-            );
-        });
+//        Socialite::extend($this->driver, function($app) {
+//            $providers = \Tohur\SocialConnect\Models\Settings::instance()->get('providers', []);
+//            $providers['Twitter']['redirect'] = URL::route('tohur_socialconnect_provider_callback', ['Twitter'], true);
+//
+//            return new TwitterProviderExt(
+//                    app()->request, new TwitterServer($providers['Twitter'])
+//            );
+//            return Socialite::buildProvider(
+//                            TwitterProviderExt::class, (array) @$providers['Twitter']
+//            );
+//        });
     }
 
     public function isEnabled() {
@@ -92,7 +92,7 @@ class Twitter extends SocialConnectProviderBase {
                 'label' => 'Access token secret',
                 'type' => 'text',
                 'tab' => 'Twitter',
-            ],            
+            ],
                 ], 'primary');
     }
 
@@ -100,6 +100,7 @@ class Twitter extends SocialConnectProviderBase {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function redirectToProvider() {
+
         return Socialite::driver($this->driver)->redirect();
     }
 
