@@ -13,7 +13,7 @@
         "laravel/socialite": "3.4.*",
         "socialiteproviders/discord": "2.0.*",
         "socialiteproviders/twitch": "5.2.*",
-        "socialiteproviders/microsoft-graph": "3.1.*",
+        "socialiteproviders/microsoft": "3.0.*",
         "nicklaw5/twitch-api-php": "3.0.*",
         "tohur/twitter": "dev-master",
         "jublonet/codebird-php": "dev-develop"

@@ -7,7 +7,7 @@ use Laravel\Socialite\Two\ProviderInterface;
 use SocialiteProviders\Manager\OAuth2\User;
 use Socialite;
 use URL;
-use SocialiteProviders\Graph\Provider;
+use SocialiteProviders\Microsoft\Provider;
 
 class MicrosoftProviderExt extends Provider {
 
