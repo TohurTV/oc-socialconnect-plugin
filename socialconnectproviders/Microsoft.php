@@ -80,8 +80,8 @@ class Microsoft extends SocialConnectProviderBase {
                 'type' => 'text',
                 'tab' => 'Microsoft',
             ],
-            'providers[Microsoft][client_secret]' => [
-                'label' => 'Client Secret',
+            'providers[Microsoft][tenant]' => [
+                'label' => 'Tenant Id',
                 'type' => 'text',
                 'tab' => 'Microsoft',
             ],
