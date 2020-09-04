@@ -3,7 +3,7 @@
 namespace Tohur\SocialConnect\Classes;
 
 use Illuminate\Support\Arr;
-use SocialiteProviders\One\User;
+use Laravel\Socialite\One\User;
 use Socialite;
 use URL;
 use Laravel\Socialite\One\TwitterProvider;
