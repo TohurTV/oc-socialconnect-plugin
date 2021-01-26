@@ -78,4 +78,6 @@
 1.1.24:
     - Microsoft Fix
 1.1.25:
-    - Twitter Fix    
+    - Twitter Fix
+1.2:
+    - Updating Sociallite for Laravel 6 based Octobercms. if running older versios DO NOT UPDATE

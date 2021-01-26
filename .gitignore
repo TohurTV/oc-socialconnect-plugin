@@ -1,1 +1,7 @@
 nbproject
+/.idea/.gitignore
+/.idea/deployment.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/oc-socialconnect-plugin.iml
+/.idea/vcs.xml
